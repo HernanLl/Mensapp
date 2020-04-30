@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import "./styles.scss";
 
 function Textarea(props) {
-  const { color, value, width, height, onChange, placeholder } = props;
+  const { color, value, width, height, onChange, placeholder, helper } = props;
   const [focus, setFocus] = useState(false);
   let style = {};
   if (focus || value) {
@@ -26,7 +26,7 @@ function Textarea(props) {
   return (
     <div className="Textarea" style={{ width, height, ...style.container }}>
       <label className="Textarea__label" style={style.label}>
-        {placeholder}
+        {`${placeholder} ${focus || value ? "" : helper}`}
       </label>
       <textarea
         className="Textarea__textarea"

@@ -18,7 +18,7 @@ function Login(props) {
     <div className="FormContainer">
       <div className="FormContainer__brand">MENSAPP</div>
       <form className="FormContainer__form Form">
-        <p className="FormContainer__titleLogin">Bienvenido</p>
+        <p className="FormContainer__title">Bienvenido</p>
         <Input
           icon="USER"
           color="#ccc"

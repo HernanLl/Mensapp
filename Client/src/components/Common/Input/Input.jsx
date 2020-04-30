@@ -12,6 +12,7 @@ function Input(props) {
     onChange,
     onPressEnter,
     placeholder,
+    helper,
   } = props;
   const [focus, setFocus] = useState(false);
   let style = {};
@@ -47,7 +48,7 @@ function Input(props) {
         />
       )}
       <label className="Input__label" style={style.label}>
-        {placeholder}
+        {`${placeholder} ${focus || value ? "" : helper}`}
       </label>
       <input
         className="Input__input"
