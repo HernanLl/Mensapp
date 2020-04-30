@@ -1,0 +1,17 @@
+.Chatboard {
+    display: flex;
+    &__1 {
+        width: 350;
+        height: 100vh;
+        background: #eee;
+    }
+    &__2 {
+        flex: 1;
+        background: white;
+    }
+    &__3 {
+        width: 350;
+        height: 100vh;
+        background: #eee;
+    }
+}
