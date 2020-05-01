@@ -1,5 +1,6 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import PropTypes from "prop-types";
+import Cookie from "js-cookie";
 import Input from "../../Common/Input/Input";
 import { Link } from "react-router-dom";
 import { Context } from "../../../context/Context";
@@ -7,12 +8,28 @@ import { Context } from "../../../context/Context";
 function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setAuthenticated } = useContext(Context);
+  const { setAuthenticated, socket } = useContext(Context);
+
   const onLogin = (e) => {
     e.preventDefault();
-    localStorage.setItem("token", "cualquiercosa");
-    setAuthenticated(true);
+    socket.emit("login", { email, password });
   };
+
+  const handlerLogin = ({ status, message, token, refreshToken, id }) => {
+    if (status === 200) {
+      Cookie.set("Auth", { token, refreshToken, id });
+      setAuthenticated(true);
+    } else {
+      //poner el dialog
+      alert(message);
+    }
+  };
+  useEffect(() => {
+    socket.on("login", handlerLogin);
+    return () => {
+      socket.off("login", handlerLogin);
+    };
+  }, []);
 
   return (
     <div className="FormContainer">

@@ -26,7 +26,7 @@ function Textarea(props) {
   return (
     <div className="Textarea" style={{ width, height, ...style.container }}>
       <label className="Textarea__label" style={style.label}>
-        {`${placeholder} ${focus || value ? "" : helper}`}
+        {`${placeholder} ${!helper || focus || value ? "" : helper}`}
       </label>
       <textarea
         className="Textarea__textarea"
@@ -34,6 +34,7 @@ function Textarea(props) {
         onBlur={() => setFocus(false)}
         onChange={(e) => onChange(e.target.value)}
         value={value}
+        spellCheck={false}
       />
     </div>
   );

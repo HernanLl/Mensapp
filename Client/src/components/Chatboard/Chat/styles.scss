@@ -1,0 +1,50 @@
+.Chat {
+  flex: 1;
+  &__info {
+    height: 100px;
+    padding: 1rem;
+    cursor: pointer;
+    .Info {
+      &__name {
+        font-size: 2rem;
+      }
+      &__user {
+        display: flex;
+        align-items: center;
+      }
+      &__connect {
+        width: 10px;
+        height: 10px;
+        margin: 0 1rem;
+        border-radius: 3rem;
+        background: green;
+      }
+      &__state {
+        font-size: 0.9rem;
+      }
+    }
+  }
+  &__listMessages {
+    flex: 1;
+    height: calc(100vh - 150px);
+    overflow: auto;
+    padding-bottom: 1rem;
+  }
+  &__input {
+    display: flex;
+    height: 50px;
+    width: 100%;
+    input {
+      flex: 1;
+      height: 100%;
+      background: #eef0f2;
+      border: none;
+      padding: 0 1rem;
+      font-size: 18px;
+    }
+    .Icon {
+      background: #eef0f2;
+      padding: 10px;
+    }
+  }
+}

@@ -5,7 +5,7 @@ function Icon(props) {
   const { name, size, color, pointer, hidden, onClick } = props;
   return !hidden ? (
     <svg
-      className="icon"
+      className="Icon"
       viewBox="0 0 512 512"
       style={{
         width: `${size}px`,

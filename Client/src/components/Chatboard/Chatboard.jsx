@@ -1,15 +1,22 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React, { useEffect } from "react";
 import "./styles.scss";
 import Navbar from "./Navbar/Navbar";
+import Chat from "./Chat/Chat";
+import Profile from "./Profile/Profile";
 
-function Chatboard(props) {
+function Chatboard() {
   return (
     <div className="Chatboard">
       <Navbar />
       <div className="Chatboard__1"></div>
-      <div className="Chatboard__2"></div>
-      <div className="Chatboard__3"></div>
+      <Chat
+        name={"Maria Evans"}
+        state={
+          "No pierdas nunca el sentido del humor y aprende a reírte de tus propios defectos."
+        }
+        connected={true}
+      />
+      <Profile />
     </div>
   );
 }

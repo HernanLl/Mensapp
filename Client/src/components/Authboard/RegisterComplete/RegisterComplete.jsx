@@ -1,51 +1,73 @@
+//React and js-cookie
 import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
+import Cookie from "js-cookie";
+
+//components
 import Input from "../../Common/Input/Input";
 import Textarea from "../../Common/Textarea/Textarea";
 import Icon from "../../Common/Icon/Icon";
+
+//HOC and context
 import { Context } from "../../../context/Context";
-import useWidget from "../../../hooks/useWidget";
+import useWidget from "../../../HOC/useWidget";
 
 function RegisterComplete(props) {
-  const [location, setLocation] = useState("");
-  const [state, setState] = useState("");
+  const { setSelectedImage, images } = props;
   const [urlprofile, setUrlprofile] = useState();
   const [urlbackground, setUrlbackground] = useState();
+  const [location, setLocation] = useState("");
+  const [state, setState] = useState("");
 
-  const { setAuthenticated } = useContext(Context);
-
-  const { selectedImage, setSelectedImage, images } = useWidget([
-    "https://res.cloudinary.com/dqiahaymp/image/upload/v1588221691/bw0onoi5xarc0hazsalr.jpg",
-    "https://images.unsplash.com/photo-1588106351529-6878ca466d1f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80",
-  ]);
+  const { setAuthenticated, socket } = useContext(Context);
 
   useEffect(() => {
+    const abortController = new AbortController();
     navigator.geolocation.getCurrentPosition((position) => {
       const crd = position.coords;
       fetch(
-        `https://geocode.xyz/${crd.latitude},${crd.longitude}?json=1&auth=183676455000933134518x5813`
+        `https://geocode.xyz/${crd.latitude},${crd.longitude}?json=1&auth=183676455000933134518x5813`,
+        {
+          signal: abortController.signal,
+        }
       )
         .then((res) => res.json())
         .then((res) => setLocation(`${res.city}, ${res.country}`));
     });
+    return () => {
+      abortController.abort();
+    };
   }, []);
 
   useEffect(() => {
-    if (selectedImage === -1) {
-      setUrlprofile(images[0]);
-      setUrlbackground(images[1]);
-    }
-  }, [selectedImage]);
+    setUrlprofile(images[0]);
+    setUrlbackground(images[1]);
+  }, [images]);
 
   const onFinish = (e) => {
     e.preventDefault();
-    alert("Registro finalizado");
-    localStorage.setItem("token", "randomtext");
-    setAuthenticated(true);
+    if (Cookie.get("Auth")) {
+      const { token, refreshToken, id } = JSON.parse(Cookie.get("Auth"));
+      socket.emit("register complete", {
+        token,
+        refreshToken,
+        id,
+        urlprofile,
+        urlbackground,
+        state,
+        location,
+      });
+      props.history.push("/");
+      setAuthenticated(true);
+    }
   };
 
+  const profile =
+    images[0].substr(0, images[0].indexOf("upload") + 7) +
+    "w_600,h_600,c_fill,g_face/" +
+    images[0].substr(images[0].indexOf("upload") + 7);
   return (
-    <div className="FormContainer">
+    <div className="FormContainer scroll">
       <div className="FormContainer__brand">MENSAPP</div>
       <form className="FormContainer__form Form">
         <p className="Form__description">
@@ -59,7 +81,7 @@ function RegisterComplete(props) {
             <div className="filter">
               <Icon name="CAMERA" size={75} color="white" />
             </div>
-            <img src={urlprofile} />
+            <img src={profile} />
           </div>
         </div>
         <div className="row">
@@ -101,4 +123,4 @@ function RegisterComplete(props) {
 
 RegisterComplete.propTypes = {};
 
-export default RegisterComplete;
+export default useWidget(RegisterComplete);

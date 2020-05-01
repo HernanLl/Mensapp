@@ -48,7 +48,7 @@ function Input(props) {
         />
       )}
       <label className="Input__label" style={style.label}>
-        {`${placeholder} ${focus || value ? "" : helper}`}
+        {`${placeholder} ${!helper || focus || value ? "" : helper}`}
       </label>
       <input
         className="Input__input"
@@ -58,6 +58,7 @@ function Input(props) {
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
         onKeyDown={onKeyDown}
+        spellCheck={false}
       />
     </div>
   );

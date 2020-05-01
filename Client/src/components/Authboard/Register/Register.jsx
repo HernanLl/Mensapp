@@ -1,16 +1,35 @@
 import React, { useState, useContext } from "react";
 import PropTypes from "prop-types";
+import Cookie from "js-cookie";
 import Input from "../../Common/Input/Input";
 import { Link } from "react-router-dom";
+import { Context } from "../../../context/Context";
 
 function Register(props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeat, setRepeat] = useState("");
+
+  const { socket } = useContext(Context);
+
+  const handlerRegister = ({ status, message, token, refreshToken, id }) => {
+    if (status === 200) {
+      Cookie.set("Auth", { token, refreshToken, id });
+      props.history.push("/signup/finish");
+    } else {
+      //poner el dialog
+      alert(message);
+    }
+  };
+
   const onRegister = (e) => {
     e.preventDefault();
-    props.history.push("/signup/finish");
+    socket.emit("register", { name, email, password });
+    socket.on("register", handlerRegister);
+    return () => {
+      socket.off("register", handlerRegister);
+    };
   };
 
   return (

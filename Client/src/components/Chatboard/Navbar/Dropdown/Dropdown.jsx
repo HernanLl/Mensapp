@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
+import Cookie from "js-cookie";
 import "./styles.scss";
-import Icon from "../../../Common/Icon/Icon";
 import { Context } from "../../../../context/Context";
+import Icon from "../../../Common/Icon/Icon";
 
 export default function Dropdown(props) {
   const [active, setActive] = useState(false);
@@ -14,7 +15,7 @@ export default function Dropdown(props) {
   }, [active]);
 
   const onSignout = () => {
-    localStorage.removeItem("token");
+    Cookie.remove("Auth");
     setAuthenticated(false);
   };
 
