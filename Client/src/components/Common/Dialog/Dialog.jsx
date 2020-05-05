@@ -13,8 +13,8 @@ function Dialog(props) {
     onClose,
     onSuccess,
   } = props;
-  let color;
-  let iconName;
+  let color = "";
+  let iconName = "";
   switch (type) {
     case "success":
       color = "#00c851";
@@ -35,16 +35,22 @@ function Dialog(props) {
         <Icon name={iconName} size={70} color="white" />
       </div>
       <div className="Dialog__info">
-        <p className="title">{title}</p>
-        <p className="subtitle">{description}</p>
+        <p className="Info__title">{title}</p>
+        <p className="Info__subtitle">{description}</p>
       </div>
       <div className="Dialog__options">
         {options && (
           <Fragment>
-            <button onClick={onClose} className="button button--cancel">
+            <button
+              onClick={onClose}
+              className="Options__button Options__button--cancel"
+            >
               Cancelar
             </button>
-            <button onClick={onSuccess} className="button button--accept">
+            <button
+              onClick={onSuccess}
+              className="Options__button Options__button--accept"
+            >
               Aceptar
             </button>
           </Fragment>
@@ -64,7 +70,7 @@ function Dialog(props) {
 }
 
 Dialog.propTypes = {
-  tpye: PropTypes.oneOf(["success", "danger", "info"]),
+  type: PropTypes.oneOf(["success", "danger", "info"]),
   options: PropTypes.bool,
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,

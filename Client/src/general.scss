@@ -1,0 +1,63 @@
+//Pallete
+$color1: rgba(230, 57, 70, 1);
+$color2: rgba(241, 250, 238, 1);
+$color3: rgba(72, 72, 72, 1);
+$color4: rgba(69, 123, 157, 1);
+$color5: rgba(29, 53, 87, 1);
+
+//Actions
+$danger: rgba(255, 68, 68, 1);
+$success: rgba(0, 200, 81, 1);
+$info: rgba(51, 181, 229, 1);
+
+//styles
+@mixin flex-row-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+@mixin flex-column-center {
+    @include flex-row-center;
+    flex-direction: column;
+}
+@mixin button1 {
+    display: flex;
+    align-items: center;
+    margin: 2rem 0;
+    padding: 16px 46px;
+    border-radius: 3rem;
+    border: none;
+    color: white;
+    font-size: 18px;
+    outline: none;
+    cursor: pointer;
+}
+
+//text styles
+.font-1 {
+    font-size: 18px;
+}
+.font-2 {
+    font-size: 32px;
+}
+.font-3 {
+    font-size: 64px;
+}
+
+//spacing styles
+.m-1 {
+    margin: 16px;
+}
+.mx-1 {
+    margin: 0 16px;
+}
+.my-1 {
+    margin: 16px 0;
+}
+
+//img styles
+.img {
+    width: 100%;
+    min-height: 100%;
+    object-fit: cover;
+}

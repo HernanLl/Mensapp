@@ -14,12 +14,13 @@ export default function useWidget(WrappedComponent) {
     const { socket } = useContext(Context);
 
     const generateSignature = (cb, params_to_sign) => {
+      const { token, refreshToken, id } = JSON.parse(Cookie.get("Auth"));
       fetch("http://localhost:3000/generateSignature", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(params_to_sign),
+        body: JSON.stringify({ params_to_sign, token, refreshToken, id }),
       })
         .then((res) => res.json())
         .then((res) => cb(res));
@@ -39,15 +40,15 @@ export default function useWidget(WrappedComponent) {
               const { token, refreshToken, id } = JSON.parse(
                 Cookie.get("Auth")
               );
-              if (images[selectedImage] !== defaultImages[selectedImage]) {
-                socket.emit("remove image", {
-                  token,
-                  refreshToken,
-                  id,
-                  url: images[selectedImage],
-                });
-              }
-
+              //update url in database and remove old image
+              socket.emit("update and remove", {
+                token,
+                refreshToken,
+                id,
+                url: images[selectedImage],
+                newurl: result.info.url,
+                selectedImage,
+              });
               let arr = images.slice();
               arr[selectedImage] = result.info.url;
               setImages(arr);
@@ -62,6 +63,7 @@ export default function useWidget(WrappedComponent) {
       <WrappedComponent
         {...props}
         images={images}
+        setImages={setImages}
         selectedImage={selectedImage}
         setSelectedImage={setSelectedImage}
       />

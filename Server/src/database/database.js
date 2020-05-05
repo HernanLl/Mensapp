@@ -8,6 +8,7 @@ const {
   VERIFYEMAIL,
   GETUSERS,
   GETMESSAGES,
+  GETLATESTMESSAGE,
   SAVEMESSAGE,
   REMOVEUSER,
 } = require("./querys");
@@ -51,8 +52,8 @@ async function updateUser(
   name,
   email,
   password,
-  urlProfile,
-  urlBackground,
+  urlprofile,
+  urlbackground,
   state,
   location
 ) {
@@ -62,8 +63,8 @@ async function updateUser(
       name || user.name,
       email || user.email,
       password || user.password,
-      urlProfile || user.urlProfile,
-      urlBackground || user.urlBackground,
+      urlprofile || user.urlprofile,
+      urlbackground || user.urlbackground,
       state || user.state,
       location || user.location,
       id,
@@ -87,6 +88,14 @@ async function getUsers(id) {
     return err;
   }
 }
+async function getLatestMessage(to, from) {
+  try {
+    const res = await pool.query(GETLATESTMESSAGE, [to, from]);
+    return res.rows && res.rows.length === 1 ? res.rows[0] : null;
+  } catch (err) {
+    return err;
+  }
+}
 async function getMessages(id, other) {
   try {
     const res = await pool.query(GETMESSAGES, [id, other]);
@@ -95,29 +104,11 @@ async function getMessages(id, other) {
     return err;
   }
 }
-async function saveMessage(
-  to,
-  from,
-  message,
-  url,
-  datetime,
-  view,
-  received,
-  urlProfile
-) {
+async function saveMessage(to, from, message, datetime, urlprofile) {
   try {
-    await pool.query(SAVEMESSAGE, [
-      to,
-      from,
-      message,
-      url,
-      datetime,
-      view,
-      received,
-      urlProfile,
-    ]);
+    await pool.query(SAVEMESSAGE, [to, from, message, datetime, urlprofile]);
   } catch (err) {
-    return err;
+    console.log(err);
   }
 }
 async function removeUser(id) {
@@ -136,6 +127,7 @@ module.exports = {
   verifyEmail,
   getUsers,
   getMessages,
+  getLatestMessage,
   saveMessage,
   removeUser,
 };

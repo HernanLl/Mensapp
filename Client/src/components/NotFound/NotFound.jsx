@@ -1,10 +1,9 @@
 import React from "react";
 import "./styles.scss";
-import Icon from "../Common/Icon/Icon";
 import sad from "../../assets/sad.png";
 import { Link } from "react-router-dom";
 
-function NotFound(props) {
+function NotFound() {
   return (
     <div className="NotFound">
       <img className="NotFound__img" src={sad} />

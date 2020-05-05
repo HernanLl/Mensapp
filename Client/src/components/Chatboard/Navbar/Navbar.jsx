@@ -3,7 +3,7 @@ import "./styles.scss";
 import Icon from "../../Common/Icon/Icon";
 import Dropdown from "./Dropdown/Dropdown";
 export default function Navbar(props) {
-  const { onClickMessages, onClickUser, onClickConfig } = props;
+  const { onClickMessages, onClickUser, onClickConfig, setEdit } = props;
   return (
     <div className="Navbar">
       <div className="Navbar__user">
@@ -14,8 +14,20 @@ export default function Navbar(props) {
         />
       </div>
       <div className="Navbar__Icons">
-        <Icon name="PLANE" size={40} color="white" pointer={true} />
-        <Icon name="PROFILE" size={40} color="white" pointer={true} />
+        <Icon
+          name="PLANE"
+          size={40}
+          color="white"
+          pointer={true}
+          onClick={() => setEdit(false)}
+        />
+        <Icon
+          name="PROFILE"
+          size={40}
+          color="white"
+          pointer={true}
+          onClick={() => setEdit(true)}
+        />
         <Dropdown />
       </div>
     </div>

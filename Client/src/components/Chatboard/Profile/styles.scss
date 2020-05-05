@@ -1,5 +1,72 @@
 .Profile {
-  width: 350px;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   height: 100vh;
+  width: 350px;
   background: #eee;
+  overflow: hidden;
+  right: 0;
+  bottom: 0;
+  transition: all 1s;
+  &__background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    img {
+      width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+    }
+  }
+  &__filter {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background: rgba(0, 0, 0, 0.4);
+  }
+  &__icon {
+    position: relative;
+    padding: 1rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  &__profile {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    img {
+      width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+    }
+  }
+  &__Info {
+    position: relative;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    p {
+      margin: 1rem 0;
+    }
+  }
+  .Info {
+    &__location {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .Icon {
+        margin: 0 0.5rem;
+      }
+    }
+    &__title {
+      font-size: 2rem;
+    }
+  }
 }

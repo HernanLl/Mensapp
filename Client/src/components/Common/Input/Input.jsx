@@ -13,41 +13,39 @@ function Input(props) {
     onPressEnter,
     placeholder,
     helper,
+    textcolor,
   } = props;
   const [focus, setFocus] = useState(false);
-  let style = {};
-  if (focus || value) {
-    style = {
-      container: { borderBottom: "2px solid #79C7F9" },
-      label: {
-        left: "30px",
-        top: "-10px",
-        color: "#79C7F9",
-        fontSize: "16px",
-        letterSpacing: "2px",
-      },
-    };
-  } else {
-    style = {
-      container: { borderBottom: `2px solid ${color}` },
-      label: { color, fontSize: "20px" },
-    };
-  }
+
   const onKeyDown = (e) => {
     if (e.keyCode === 13 && onPressEnter) {
       onPressEnter();
     }
   };
+
+  const styles =
+    focus || value
+      ? {
+          container: { borderBottom: "2px solid #79C7F9" },
+          label: {
+            left: "30px",
+            top: "-10px",
+            color: "#79C7F9",
+            fontSize: "16px",
+            letterSpacing: "2px",
+          },
+          iconColor: "#79C7F9",
+        }
+      : {
+          container: { borderBottom: `2px solid ${color}` },
+          label: { color, fontSize: "20px" },
+          iconColor: color,
+        };
+
   return (
-    <div className="Input" style={style.container}>
-      {icon && (
-        <Icon
-          name={icon}
-          size={30}
-          color={focus || value ? "#79C7F9" : color}
-        />
-      )}
-      <label className="Input__label" style={style.label}>
+    <div className="Input" style={styles.container}>
+      {icon && <Icon name={icon} size={30} color={styles.iconColor} />}
+      <label className="Input__label" style={styles.label}>
         {`${placeholder} ${!helper || focus || value ? "" : helper}`}
       </label>
       <input
@@ -59,19 +57,22 @@ function Input(props) {
         onBlur={() => setFocus(false)}
         onKeyDown={onKeyDown}
         spellCheck={false}
+        style={{ color: textcolor }}
       />
     </div>
   );
 }
 
 Input.propTypes = {
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  placeholder: PropTypes.string.isRequired,
   icon: PropTypes.string,
   color: PropTypes.string,
   type: PropTypes.string,
-  value: PropTypes.string,
-  onChange: PropTypes.func,
   onPressEnter: PropTypes.func,
-  placeholder: PropTypes.string,
+  helper: PropTypes.string,
+  textcolor: PropTypes.string,
 };
 
 export default Input;

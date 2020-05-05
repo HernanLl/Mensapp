@@ -20,12 +20,26 @@ function App(props) {
   );
 
   const handlerError = ({ code, message }) => {
-    alert(message);
+    if (code === 401 || code === 500) {
+      Cookie.remove("Auth");
+      setAuthenticated(false);
+    }
+  };
+  const handlerNewToken = ({ newtoken, newrefreshtoken }) => {
+    const { token, refreshToken, id } = JSON.parse(Cookie.get("Auth"));
+    Cookie.set("Auth", {
+      token: newtoken || token,
+      refreshToken: newrefreshtoken || refreshToken,
+      id,
+    });
   };
   useEffect(() => {
     socket.on("error server", handlerError);
+    socket.on("new token", handlerNewToken);
+
     return () => {
       socket.off("error server", handlerError);
+      socket.off("new token", handlerNewToken);
     };
   }, []);
   return (

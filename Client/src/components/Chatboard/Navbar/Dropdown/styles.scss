@@ -9,6 +9,7 @@
     transition: all 0.5s;
     overflow: hidden;
     box-shadow: 5px 5px 20px #595959;
+    z-index: 2;
   }
   &__options--active {
     width: 150px;

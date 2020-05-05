@@ -21,7 +21,8 @@ const VERIFYEMAIL = `UPDATE users SET verified=$1 WHERE id=$2`;
 const GETUSERS = `SELECT id,name,location,state,urlprofile,urlbackground FROM users WHERE id!=$1`;
 const GETMESSAGES = `SELECT * FROM messages 
     WHERE ("to"=$1 and "from"=$2) or ("to"=$2 and "from"=$1) order by("datetime")`;
-const SAVEMESSAGE = `INSERT INTO messages VALUES($1,$2,$3,$4,$5,$6,$7,$8)`;
+const GETLATESTMESSAGE = `SELECT * FROM messages WHERE messages.to=$1 and messages.from=$2 order by messages.datetime desc limit 1;`;
+const SAVEMESSAGE = `INSERT INTO messages VALUES($1,$2,$3,$4,$5)`;
 const REMOVEUSER = `DELETE FROM users WHERE id=$1`;
 
 module.exports = {
@@ -32,6 +33,7 @@ module.exports = {
   VERIFYEMAIL,
   GETUSERS,
   GETMESSAGES,
+  GETLATESTMESSAGE,
   SAVEMESSAGE,
   REMOVEUSER,
 };

@@ -1,11 +1,17 @@
 import React from "react";
 
-function useList(items, ItemComponent) {
+function useList(items, ItemComponent, onClick) {
+  console.log(items);
   return (
-    <div style={{ flex: "1" }}>
-      {items.map((i) => (
-        <ItemComponent {...i} />
-      ))}
+    <div style={{ width: "100%" }}>
+      {items &&
+        items.map((elem, index) => (
+          <ItemComponent
+            key={elem.id ? elem.id : index}
+            {...elem}
+            onClick={onClick}
+          />
+        ))}
     </div>
   );
 }

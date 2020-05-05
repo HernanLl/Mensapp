@@ -9,29 +9,43 @@ function generateHash(password) {
 function compareHash(password, hash) {
   return bcrypt.compareSync(password, hash);
 }
+
 function generateToken(id) {
   return jwt.sign({ id }, process.env.SECRET, {
-    expiresIn: 60 * 60 * 24 * 14,
+    expiresIn: "3h",
   });
 }
 function decodedToken(token) {
-  const decoded = jwt.decode(token, process.env.SECRET);
-  return decoded ? decoded.id : null;
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET);
+    return decoded.id;
+  } catch (err) {
+    return null;
+  }
 }
-function generateRefreshToken() {
-  return randtoken.uid(256);
+function generateRefreshToken(id) {
+  return jwt.sign({ id }, process.env.SECRET, {
+    expiresIn: "14 days",
+  });
 }
-//Verificar si es correcto
-function verifyToken(token, refreshToken, refreshTokens, id) {
+function verifyToken(token, refreshToken, refreshTokens, id, socket) {
   let authorized = false;
   const userid = decodedToken(token);
-  if (!userid) {
-    if (refreshTokens[refreshToken] === id) {
-      const newtoken = generateToken(id);
-      socket.emit("new token", { newtoken });
-      authorized = true;
+  if (userid) {
+    authorized = true;
+  } else if (id && refreshTokens[refreshToken] === id) {
+    console.log("token expirado,se va a actualizar el token");
+    //verify refresh token
+    const userid_refresh = decodedToken(refreshToken);
+    let newtoken = null,
+      newrefreshtoken = null;
+    if (!userid_refresh) {
+      delete refreshTokens[refreshToken];
+      newrefreshtoken = generateRefreshToken(id);
+      refreshTokens[newrefreshtoken] = id;
     }
-  } else {
+    newtoken = generateToken(id);
+    socket.emit("new token", { newtoken, newrefreshtoken });
     authorized = true;
   }
   return authorized;
@@ -49,7 +63,6 @@ async function sendEmail(from, to, subject, text) {
     console.log(err);
   }
 }
-
 function getPublicId(url) {
   let publicid = "";
   if (url) {

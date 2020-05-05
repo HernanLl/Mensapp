@@ -8,6 +8,7 @@ import { Context } from "../../../context/Context";
 function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const { setAuthenticated, socket } = useContext(Context);
 
   const onLogin = (e) => {
@@ -21,7 +22,7 @@ function Login(props) {
       setAuthenticated(true);
     } else {
       //poner el dialog
-      alert(message);
+      setError(message);
     }
   };
   useEffect(() => {
@@ -34,8 +35,14 @@ function Login(props) {
   return (
     <div className="FormContainer">
       <div className="FormContainer__brand">MENSAPP</div>
-      <form className="FormContainer__form Form">
-        <p className="FormContainer__title">Bienvenido</p>
+      <form className="Form">
+        <p className="font-2 m-1">Bienvenido</p>
+        {error && (
+          <div className="Form__error">
+            <p>{error}</p>
+          </div>
+        )}
+
         <Input
           icon="USER"
           color="#ccc"
@@ -58,7 +65,7 @@ function Login(props) {
         <button className="Form__button" onClick={onLogin}>
           Ingresar
         </button>
-        <p className="Form__reference">
+        <p className="font-1">
           ¿No tienes cuenta?,{" "}
           <Link className="Form__link" to="/signup">
             Registrate

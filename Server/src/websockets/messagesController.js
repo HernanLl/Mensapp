@@ -1,54 +1,37 @@
-const { decodedToken } = require("../utils/utils");
+const { decodedToken, verifyToken } = require("../utils/utils");
 const { getMessages, saveMessage } = require("../database/database");
 
-function messagesController(socket) {
-  socket.on("get messages", async function ({ token, other }) {
-    const id = decodedToken(token);
-    if (id) {
-      const data = await getMessages(id, other);
-      const messages = data.map((elem) => {
-        return {
-          to: elem.to,
-          from: elem.from,
-          message: elem.message,
-          url: elem.url,
-          datetime: elem.datetime,
-          view: elem.view,
-          received: elem.received,
-          urlProfile: elem.urlprofile,
-        };
-      });
+function messagesController(socket, refreshTokens) {
+  socket.on("get messages", async function ({
+    token,
+    refreshToken,
+    id,
+    other,
+  }) {
+    if (verifyToken(token, refreshToken, refreshTokens, id, socket)) {
+      const messages = await getMessages(id, other);
       socket.emit("get messages", { messages });
     } else {
-      socket.emit("aux", {
+      socket.emit("error server", {
         code: 401,
-        message: "Token de acceso invalido",
+        message: "Access token or refresh token invalid",
       });
     }
   });
   socket.on("new message", async function ({
     token,
+    refreshToken,
+    id,
+    newmessage,
     other,
-    message,
-    datetime,
-    urlProfile,
   }) {
-    const id = decodedToken(token);
-    if (id) {
-      await saveMessage(
-        other,
-        id,
-        message,
-        "",
-        datetime,
-        false,
-        false,
-        urlProfile
-      );
+    if (verifyToken(token, refreshToken, refreshTokens, id)) {
+      const { message, datetime, urlprofile } = newmessage;
+      await saveMessage(other, id, message, datetime, urlprofile);
     } else {
-      socket.emit("aux", {
+      socket.emit("error server", {
         code: 401,
-        message: "Token de acceso invalido",
+        message: "Access token or refresh token invalid",
       });
     }
   });

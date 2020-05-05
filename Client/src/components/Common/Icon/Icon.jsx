@@ -2,11 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import { svg } from "../../../svg";
 function Icon(props) {
-  const { name, size, color, pointer, hidden, onClick } = props;
+  const { name, size, color, pointer, hidden, onClick, viewBox } = props;
   return !hidden ? (
     <svg
       className="Icon"
-      viewBox="0 0 512 512"
+      viewBox={viewBox ? viewBox : "0 0 512 512"}
       style={{
         width: `${size}px`,
         height: `${size}px`,
@@ -29,6 +29,7 @@ Icon.propTypes = {
   pointer: PropTypes.bool,
   hidden: PropTypes.bool,
   onClick: PropTypes.func,
+  viewBox: PropTypes.string,
 };
 
 export default Icon;

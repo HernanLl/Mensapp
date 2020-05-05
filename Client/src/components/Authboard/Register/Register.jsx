@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import PropTypes from "prop-types";
 import Cookie from "js-cookie";
 import Input from "../../Common/Input/Input";
@@ -10,33 +10,57 @@ function Register(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeat, setRepeat] = useState("");
+  const [error, setError] = useState("");
 
   const { socket } = useContext(Context);
+
+  const validate = () => {
+    const reg = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+    if (!name || !email || !password) {
+      return "Todos los campos deben estar completos";
+    } else if (!reg.test(email)) {
+      return "Debe ingresar una cuenta de correo valida";
+    } else if (password !== repeat) {
+      return "Las contraseñas deben coincidir";
+    }
+  };
+
+  const onRegister = (e) => {
+    e.preventDefault();
+    const err = validate();
+    if (err) setError(err);
+    else {
+      socket.emit("register", { name, email, password });
+    }
+  };
 
   const handlerRegister = ({ status, message, token, refreshToken, id }) => {
     if (status === 200) {
       Cookie.set("Auth", { token, refreshToken, id });
       props.history.push("/signup/finish");
     } else {
-      //poner el dialog
-      alert(message);
+      setError(message);
     }
   };
 
-  const onRegister = (e) => {
-    e.preventDefault();
-    socket.emit("register", { name, email, password });
+  useEffect(() => {
     socket.on("register", handlerRegister);
     return () => {
       socket.off("register", handlerRegister);
     };
-  };
+  }, []);
 
   return (
     <div className="FormContainer">
       <div className="FormContainer__brand">MENSAPP</div>
-      <form className="FormContainer__form Form">
-        <p className="FormContainer__title">Crear cuenta</p>
+      <form className="Form">
+        <p className="font-2 m-1">Crear cuenta</p>
+        {error && (
+          <div className="Form__error">
+            <p>{error}</p>
+          </div>
+        )}
+
         <Input
           icon="USER"
           color="#ccc"
@@ -77,7 +101,7 @@ function Register(props) {
         <button className="Form__button" onClick={onRegister}>
           Registrarse
         </button>
-        <p className="Form__reference">
+        <p className="font-1">
           ¿Ya tienes cuenta?,
           <Link className="Form__link" to="/">
             {" "}

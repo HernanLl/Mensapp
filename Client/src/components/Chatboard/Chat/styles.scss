@@ -1,12 +1,21 @@
+@import "../../../general.scss";
 .Chat {
-  flex: 1;
+  transition: width 1s;
   &__info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     height: 100px;
     padding: 1rem;
+    transition: background 0.3s;
     cursor: pointer;
+    &:hover {
+      background: $color2;
+    }
     .Info {
       &__name {
-        font-size: 2rem;
+        font-size: 1.5rem;
+        margin: 10px 0;
       }
       &__user {
         display: flex;
@@ -27,8 +36,7 @@
   &__listMessages {
     flex: 1;
     height: calc(100vh - 150px);
-    overflow: auto;
-    padding-bottom: 1rem;
+    overflow: hidden auto;
   }
   &__input {
     display: flex;

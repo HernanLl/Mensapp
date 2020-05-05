@@ -11,6 +11,7 @@ import Icon from "../../Common/Icon/Icon";
 //HOC and context
 import { Context } from "../../../context/Context";
 import useWidget from "../../../HOC/useWidget";
+import { convertUrlProfile } from "../../../helper/helper";
 
 function RegisterComplete(props) {
   const { setSelectedImage, images } = props;
@@ -62,35 +63,32 @@ function RegisterComplete(props) {
     }
   };
 
-  const profile =
-    images[0].substr(0, images[0].indexOf("upload") + 7) +
-    "w_600,h_600,c_fill,g_face/" +
-    images[0].substr(images[0].indexOf("upload") + 7);
+  const profile = convertUrlProfile(images[0]);
   return (
     <div className="FormContainer scroll">
       <div className="FormContainer__brand">MENSAPP</div>
-      <form className="FormContainer__form Form">
+      <form className="Form">
         <p className="Form__description">
           Para finalizar el registro, ingrese a su correo para verificar su
           cuenta. A continuación ingrese algunos datos mas para completar su
           registro
         </p>
         <div className="row">
-          <p className="row__reference">Imagen de perfil</p>
+          <p className="font-1 mx-1">Imagen de perfil</p>
           <div className="row__profile" onClick={() => setSelectedImage(0)}>
             <div className="filter">
               <Icon name="CAMERA" size={75} color="white" />
             </div>
-            <img src={profile} />
+            <img className="img" alt="profile" src={profile} />
           </div>
         </div>
         <div className="row">
-          <p className="row__reference">Imagen de fondo</p>
+          <p className="font-1 mx-1">Imagen de fondo</p>
           <div className="row__background" onClick={() => setSelectedImage(1)}>
             <div className="filter">
               <Icon name="CAMERA" size={75} color="white" />
             </div>
-            <img src={urlbackground} />
+            <img className="img" alt="background" src={urlbackground} />
           </div>
         </div>
         <Input
