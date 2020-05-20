@@ -1,0 +1,42 @@
+users{
+	id serial primary key,
+	name varchar(128),
+	email varchar(512),
+	password varchar(512),
+	state varchar(512),
+	location varchar(128),
+	urlprofile varchar(512),
+	urlbackground varchar(512),
+	verified boolean,
+	erased boolean
+}
+messages{
+	to references users.id,
+	from references users.id,
+	message text,
+	datetime timestamp,
+	urlprofile varchar(512),
+	viewed boolean
+}
+
+//postgres
+create table users(
+	id serial primary key,
+	name varchar(128) not null,
+	email varchar(512) not null,
+	password varchar(512) not null,
+	state varchar(512),
+	location varchar(128),
+	urlprofile varchar(512),
+	urlbackground varchar(512),
+	verified boolean,
+	erased boolean
+);
+create table messages(
+	"to" integer references users(id),
+	"from" integer references users(id),
+	message text,
+	"datetime" timestamp,
+	urlprofile varchar(512),
+	viewed boolean
+);

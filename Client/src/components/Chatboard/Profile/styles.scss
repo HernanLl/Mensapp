@@ -1,8 +1,5 @@
 .Profile {
   position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   height: 100vh;
   width: 350px;
   background: #eee;
@@ -10,6 +7,13 @@
   right: 0;
   bottom: 0;
   transition: all 1s;
+  &__container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
   &__background {
     position: absolute;
     width: 100%;

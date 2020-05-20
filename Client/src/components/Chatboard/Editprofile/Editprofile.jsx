@@ -5,7 +5,7 @@ import Input from "../../Common/Input/Input";
 import Icon from "../../Common/Icon/Icon";
 import Textarea from "../../Common/Textarea/Textarea";
 import useWidget from "../../../HOC/useWidget";
-import { convertUrlProfile } from "../../../helper/helper";
+import { convertUrlProfile, getCookie } from "../../../helper/helper";
 import { Context } from "../../../context/Context";
 import Cookie from "js-cookie";
 
@@ -18,14 +18,14 @@ function Editprofile(props) {
     setSelectedImage,
     data,
   } = props;
-  const [datalocal, setDatalocal] = useState({
+  const [datalocal, setDatalocal] = useState();
+  const { name, state, location, urlprofile, urlbackground } = datalocal || {
     name: "",
     state: "",
     location: "",
     urlprofile: "",
     urlbackground: "",
-  });
-  const { name, state, location, urlprofile, urlbackground } = datalocal;
+  };
 
   const { socket } = useContext(Context);
 
@@ -47,7 +47,7 @@ function Editprofile(props) {
 
   const onFinish = () => {
     setActive(false);
-    const { token, refreshToken, id } = JSON.parse(Cookie.get("Auth"));
+    const { token, refreshToken, id } = getCookie();
     socket.emit("edit user", {
       token,
       refreshToken,
@@ -60,10 +60,12 @@ function Editprofile(props) {
     });
   };
 
-  const style = active ? { width: "calc(100% - 75px)" } : { width: "0" };
+  const style = active
+    ? { width: "calc(100% - 75px)" }
+    : { width: "0px", overflow: "hidden" };
   const profile = convertUrlProfile(urlprofile);
   return (
-    <div className="Editprofile" style={style}>
+    <div className="Editprofile scroll" style={style}>
       <div className="Form">
         <p className="Form__title">Editar usuario</p>
         <Input
@@ -101,7 +103,7 @@ function Editprofile(props) {
             <div className="filter">
               <Icon name="CAMERA" size={75} color="white" />
             </div>
-            <img src={urlprofile} />
+            <img src={profile} />
           </div>
         </div>
         <div className="row">

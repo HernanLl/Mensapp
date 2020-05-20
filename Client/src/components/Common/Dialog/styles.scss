@@ -1,5 +1,6 @@
 .Dialog {
   position: absolute;
+  z-index: 2;
   top: 16px;
   left: calc(50% - 175px);
   display: flex;
@@ -22,6 +23,7 @@
     align-items: center;
     text-align: center;
     padding: 16px 8px;
+    background: white;
   }
   .Info {
     &__title {
@@ -37,6 +39,7 @@
     justify-content: space-around;
     padding: 10px;
     height: 65px;
+    background: white;
   }
   .Options {
     &__button {

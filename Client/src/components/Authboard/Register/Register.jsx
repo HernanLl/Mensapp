@@ -1,18 +1,19 @@
 import React, { useState, useContext, useEffect } from "react";
-import PropTypes from "prop-types";
 import Cookie from "js-cookie";
 import Input from "../../Common/Input/Input";
 import { Link } from "react-router-dom";
 import { Context } from "../../../context/Context";
 
 function Register(props) {
+  const { setMessage } = props;
+  //context
+  const { socket } = useContext(Context);
+  //form values and error
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeat, setRepeat] = useState("");
   const [error, setError] = useState("");
-
-  const { socket } = useContext(Context);
 
   const validate = () => {
     const reg = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
@@ -34,10 +35,12 @@ function Register(props) {
     }
   };
 
-  const handlerRegister = ({ status, message, token, refreshToken, id }) => {
+  const handlerRegister = ({ status, message }) => {
     if (status === 200) {
-      Cookie.set("Auth", { token, refreshToken, id });
-      props.history.push("/signup/finish");
+      setMessage(
+        "Registrado exitosamente, por favor verifique su correo para continuar"
+      );
+      props.history.push("/");
     } else {
       setError(message);
     }
@@ -56,7 +59,7 @@ function Register(props) {
       <form className="Form">
         <p className="font-2 m-1">Crear cuenta</p>
         {error && (
-          <div className="Form__error">
+          <div className="Form__message Form__message-error">
             <p>{error}</p>
           </div>
         )}
@@ -65,23 +68,27 @@ function Register(props) {
           icon="USER"
           color="#ccc"
           type="text"
+          name="name-register"
           value={name}
           onChange={(value) => setName(value)}
           onPressEnter={() => {}}
           placeholder="Nombre completo"
         />
         <Input
-          icon="USER"
+          icon="EMAIL"
           color="#ccc"
+          name="email-register"
           type="email"
           value={email}
           onChange={(value) => setEmail(value)}
           onPressEnter={() => {}}
           placeholder="Email"
+          autocomplete={false}
         />
         <Input
           icon="KEY"
           color="#ccc"
+          name="password-register"
           type="password"
           value={password}
           onChange={(value) => setPassword(value)}
@@ -91,6 +98,7 @@ function Register(props) {
         <Input
           icon="KEY"
           color="#ccc"
+          name="repeat-register"
           type="password"
           value={repeat}
           onChange={(value) => setRepeat(value)}
@@ -112,7 +120,5 @@ function Register(props) {
     </div>
   );
 }
-
-Register.propTypes = {};
 
 export default Register;

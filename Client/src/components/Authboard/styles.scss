@@ -38,13 +38,18 @@
     @include flex-column-center;
     width: 100%;
     min-height: 100%;
-    &__error {
+    &__message {
       width: 100%;
-      padding: 8px;
+      padding: 10px;
       margin: 1rem 0;
-      text-align: center;
-      background: $danger;
+      font-weight: bold;
       color: white;
+    }
+    &__message-success {
+      background: $success;
+    }
+    &__message-error {
+      background: $danger;
     }
     &__description {
       margin: 1rem 0;

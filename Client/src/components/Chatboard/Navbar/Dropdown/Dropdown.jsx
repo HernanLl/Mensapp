@@ -5,6 +5,7 @@ import { Context } from "../../../../context/Context";
 import Icon from "../../../Common/Icon/Icon";
 
 export default function Dropdown(props) {
+  const { openProfile } = props;
   const [active, setActive] = useState(false);
   const myref = useRef(null);
   const { setAuthenticated } = useContext(Context);
@@ -47,6 +48,9 @@ export default function Dropdown(props) {
       >
         <div className="Dropdown__item" onClick={onSignout}>
           <p>Cerrar sesión</p>
+        </div>
+        <div className="Dropdown__item" onClick={openProfile}>
+          <p>Abrir perfil</p>
         </div>
         <div className="Dropdown__item" onClick={() => {}}>
           <p>Borrar cuenta</p>

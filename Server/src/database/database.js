@@ -11,7 +11,10 @@ const {
   GETLATESTMESSAGE,
   SAVEMESSAGE,
   REMOVEUSER,
+  COUNTMESSAGESNOTVIEWED,
+  CHECKALLMESSAGES,
 } = require("./querys");
+const { defaultImages } = require("../helper/helper");
 
 async function userById(id) {
   try {
@@ -30,7 +33,7 @@ async function userByEmail(email) {
     console.log(err);
   }
 }
-async function saveUser(name, email, password) {
+async function saveUser({ name, email, password }) {
   try {
     await pool.query(SAVEUSER, [
       name,
@@ -38,16 +41,17 @@ async function saveUser(name, email, password) {
       password,
       false,
       //defualt values for images of the new user
-      "https://res.cloudinary.com/dqiahaymp/image/upload/v1587416862/itpdxlrhuyqlfg8qiorg.jpg",
-      "https://res.cloudinary.com/dqiahaymp/image/upload/v1587509200/mcnvvwtvvvior87ljb9m.jpg",
+      defaultImages[0],
+      defaultImages[1],
+      false,
     ]);
     const user = await userByEmail(email);
     return user.id;
   } catch (err) {
-    return err;
+    console.log(err);
   }
 }
-async function updateUser(
+async function updateUser({
   id,
   name,
   email,
@@ -55,8 +59,8 @@ async function updateUser(
   urlprofile,
   urlbackground,
   state,
-  location
-) {
+  location,
+}) {
   try {
     const user = await userById(id);
     await pool.query(UPDATEUSER, [
@@ -104,9 +108,23 @@ async function getMessages(id, other) {
     return err;
   }
 }
-async function saveMessage(to, from, message, datetime, urlprofile) {
+async function saveMessage({
+  to,
+  from,
+  message,
+  datetime,
+  urlprofile,
+  viewed,
+}) {
   try {
-    await pool.query(SAVEMESSAGE, [to, from, message, datetime, urlprofile]);
+    await pool.query(SAVEMESSAGE, [
+      to,
+      from,
+      message,
+      datetime,
+      urlprofile,
+      viewed,
+    ]);
   } catch (err) {
     console.log(err);
   }
@@ -115,7 +133,22 @@ async function removeUser(id) {
   try {
     await pool.query(REMOVEUSER, [id]);
   } catch (err) {
-    return err;
+    console.log(err);
+  }
+}
+async function countMessagesNotViewed({ to, from }) {
+  try {
+    const res = await pool.query(COUNTMESSAGESNOTVIEWED, [to, from]);
+    return res.rows[0].count;
+  } catch (err) {
+    console.log(err);
+  }
+}
+async function checkAllMessages({ to, from }) {
+  try {
+    await pool.query(CHECKALLMESSAGES, [to, from]);
+  } catch (err) {
+    console.log(err);
   }
 }
 
@@ -123,11 +156,13 @@ module.exports = {
   userById,
   userByEmail,
   saveUser,
-  updateUser,
   verifyEmail,
+  updateUser,
   getUsers,
-  getMessages,
-  getLatestMessage,
-  saveMessage,
   removeUser,
+  getMessages,
+  saveMessage,
+  getLatestMessage,
+  countMessagesNotViewed,
+  checkAllMessages,
 };

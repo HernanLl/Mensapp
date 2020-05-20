@@ -9,10 +9,9 @@ function generateHash(password) {
 function compareHash(password, hash) {
   return bcrypt.compareSync(password, hash);
 }
-
 function generateToken(id) {
   return jwt.sign({ id }, process.env.SECRET, {
-    expiresIn: "3h",
+    expiresIn: "30m",
   });
 }
 function decodedToken(token) {
@@ -34,8 +33,6 @@ function verifyToken(token, refreshToken, refreshTokens, id, socket) {
   if (userid) {
     authorized = true;
   } else if (id && refreshTokens[refreshToken] === id) {
-    console.log("token expirado,se va a actualizar el token");
-    //verify refresh token
     const userid_refresh = decodedToken(refreshToken);
     let newtoken = null,
       newrefreshtoken = null;
@@ -47,13 +44,17 @@ function verifyToken(token, refreshToken, refreshTokens, id, socket) {
     newtoken = generateToken(id);
     socket.emit("new token", { newtoken, newrefreshtoken });
     authorized = true;
+  } else {
+    socket.emit("error server", {
+      code: 401,
+      message: "Access token or refresh token invalid",
+    });
   }
   return authorized;
 }
-
 async function sendEmail(from, to, subject, text) {
   try {
-    const info = await gmailTransport.sendMail({
+    await gmailTransport.sendMail({
       from,
       to,
       subject,
@@ -72,6 +73,10 @@ function getPublicId(url) {
   }
   return publicid;
 }
+const defaultImages = [
+  "https://res.cloudinary.com/dqiahaymp/image/upload/v1589148304/i1mtxj9nfxk0s29pmmrl.jpg",
+  "https://res.cloudinary.com/dqiahaymp/image/upload/v1588340109/lxgcj1sbngdfpiqwxdzc.jpg",
+];
 
 module.exports = {
   generateHash,
@@ -82,4 +87,5 @@ module.exports = {
   sendEmail,
   getPublicId,
   verifyToken,
+  defaultImages,
 };

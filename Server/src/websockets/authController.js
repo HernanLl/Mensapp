@@ -2,12 +2,12 @@ const {
   generateHash,
   compareHash,
   generateToken,
-  decodedToken,
   generateRefreshToken,
   sendEmail,
   getPublicId,
   verifyToken,
-} = require("../utils/utils");
+  defaultImages,
+} = require("../helper/helper");
 const { userByEmail, saveUser, updateUser } = require("../database/database");
 const cloduinary = require("cloudinary").v2;
 
@@ -25,13 +25,19 @@ function authController(socket, refreshTokens, sockets) {
         message = "logueado exitosamente";
         id = user.id;
 
-        //generate tokens
-        token = generateToken(user.id);
-        refreshToken = generateRefreshToken(id);
-
-        //save socket and refresh token
-        refreshTokens[refreshToken] = user.id;
-        sockets[id] = socket;
+        if (user.verified) {
+          //generate tokens
+          token = generateToken(user.id);
+          refreshToken = generateRefreshToken(id);
+          //save socket and refresh token
+          refreshTokens[refreshToken] = user.id;
+          sockets.push({ socket, id });
+          //emit new user connected
+          socket.broadcast.emit("user connected", id);
+        } else {
+          status = 403;
+          message = "Su email aun no fue verificado";
+        }
       } else {
         status = 400;
         message = "Contraseña incorrecta";
@@ -39,7 +45,6 @@ function authController(socket, refreshTokens, sockets) {
     } else {
       status = 400;
       message = "No existe el usuario ingresado";
-      socket.emit("login", { status, message });
     }
     socket.emit("login", { status, message, token, refreshToken, id });
   });
@@ -57,13 +62,10 @@ function authController(socket, refreshTokens, sockets) {
       const user = await userByEmail(email);
       if (!user) {
         const hash = generateHash(password);
-        id = await saveUser(name, email, hash);
+        id = await saveUser({ name, email, password: hash });
         status = 200;
-        //generate tokens
+        //Send email
         token = generateToken(id);
-        refreshToken = generateRefreshToken(id);
-
-        /** Send email 
         const link = "http://localhost:3000/verification/" + token;
         sendEmail(
           "hernanllull@gmail.com",
@@ -72,13 +74,8 @@ function authController(socket, refreshTokens, sockets) {
           "Este es un correo de verificacion de cuenta. Ingrese al siguiente link para activar su cuenta: " +
             link
         );
-        */
-
-        //save socket and refresh token
-        refreshTokens[refreshToken] = id;
-        sockets[id] = socket;
       } else {
-        status = 400;
+        status = 401;
         message = "Ya existe un usario con el mismo email";
       }
     }
@@ -95,16 +92,14 @@ function authController(socket, refreshTokens, sockets) {
     location,
   }) {
     if (verifyToken(token, refreshToken, refreshTokens, id, socket)) {
-      await updateUser(
+      await updateUser({
         id,
-        null,
-        null,
-        null,
         urlprofile,
         urlbackground,
         state,
-        location
-      );
+        location,
+      });
+      socket.broadcast.emit("user connected");
     } else {
       socket.emit("error server", {
         code: 401,
@@ -112,6 +107,7 @@ function authController(socket, refreshTokens, sockets) {
       });
     }
   });
+
   socket.on("update and remove", async function ({
     token,
     refreshToken,
@@ -122,30 +118,28 @@ function authController(socket, refreshTokens, sockets) {
   }) {
     if (verifyToken(token, refreshToken, refreshTokens, id, socket)) {
       //destroy old image
-      const defaultImages = [
-        "https://res.cloudinary.com/dqiahaymp/image/upload/v1588341756/aczpr4ub2jcnrp24df0f.jpg",
-        "https://res.cloudinary.com/dqiahaymp/image/upload/v1588340109/lxgcj1sbngdfpiqwxdzc.jpg",
-      ];
       if (url !== defaultImages[0] && url !== defaultImages[1]) {
         const publicid = getPublicId(url);
         cloduinary.uploader.destroy(publicid);
       }
       //save url info
-      await updateUser(
+      await updateUser({
         id,
-        null,
-        null,
-        null,
-        selectedImage === 0 ? newurl : null,
-        selectedImage === 1 ? newurl : null,
-        null,
-        null
-      );
+        urlprofile: selectedImage === 0 ? newurl : null,
+        urlbackground: selectedImage === 1 ? newurl : null,
+      });
     } else {
       socket.emit("error server", {
         code: 401,
         message: "Access token or refresh token invalid",
       });
+    }
+  });
+
+  socket.on("isAuthenticated", async function ({ id, token, refreshToken }) {
+    if (verifyToken(token, refreshToken, refreshTokens, id, socket)) {
+      console.log("hi");
+      socket.emit("isAuthenticated", {});
     }
   });
 }

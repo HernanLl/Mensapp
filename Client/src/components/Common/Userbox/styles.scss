@@ -1,4 +1,5 @@
 .Userbox {
+    position: relative;
     display: flex;
     align-items: center;
     height: 82px;
@@ -25,7 +26,8 @@
         align-items: center;
     }
     &__username {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
+        font-weight: bold;
     }
     &__connected {
         width: 10px;
@@ -38,21 +40,23 @@
         font-style: italic;
     }
     &__info {
-        height: 100%;
+        position: absolute;
         display: flex;
         flex-direction: column;
-        align-items: center;
         justify-content: center;
-        font-size: 12px;
+        align-items: center;
+        right: 0;
+        padding: 0 5px;
     }
     &__countmessages {
         border-radius: 50%;
         background: #79c7f9;
         color: white;
+        width: 20px;
         padding: 2px 5px;
-        margin: 5px 0;
     }
     &__datetime {
+        margin: 2px 0;
         color: #ccc;
     }
     &:hover {

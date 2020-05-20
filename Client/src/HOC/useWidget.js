@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Context } from "../context/Context";
 import Cookie from "js-cookie";
+import { getCookie } from "../helper/helper";
 
 export default function useWidget(WrappedComponent) {
   return (props) => {
     const defaultImages = [
-      "https://res.cloudinary.com/dqiahaymp/image/upload/v1588341756/aczpr4ub2jcnrp24df0f.jpg",
+      "https://res.cloudinary.com/dqiahaymp/image/upload/v1589148304/i1mtxj9nfxk0s29pmmrl.jpg",
       "https://res.cloudinary.com/dqiahaymp/image/upload/v1588340109/lxgcj1sbngdfpiqwxdzc.jpg",
     ];
     const [images, setImages] = useState(defaultImages);
@@ -14,7 +15,7 @@ export default function useWidget(WrappedComponent) {
     const { socket } = useContext(Context);
 
     const generateSignature = (cb, params_to_sign) => {
-      const { token, refreshToken, id } = JSON.parse(Cookie.get("Auth"));
+      const { token, refreshToken, id } = getCookie();
       fetch("http://localhost:3000/generateSignature", {
         method: "POST",
         headers: {

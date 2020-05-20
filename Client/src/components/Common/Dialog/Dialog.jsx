@@ -58,7 +58,7 @@ function Dialog(props) {
         {!options && (
           <button
             onClick={onClose}
-            className="button"
+            className="Options__button"
             style={{ background: color }}
           >
             OK
@@ -72,10 +72,10 @@ function Dialog(props) {
 Dialog.propTypes = {
   type: PropTypes.oneOf(["success", "danger", "info"]),
   options: PropTypes.bool,
-  title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
+  title: PropTypes.string,
+  description: PropTypes.string,
   display: PropTypes.bool,
-  onClose: PropTypes.func.isRequired,
+  onClose: PropTypes.func,
   onSuccess: PropTypes.func,
 };
 

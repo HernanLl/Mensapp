@@ -49,8 +49,8 @@ function Textarea(props) {
 }
 
 Textarea.propTypes = {
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
   color: PropTypes.string,
   width: PropTypes.string,
   height: PropTypes.string,

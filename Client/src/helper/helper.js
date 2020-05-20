@@ -1,3 +1,4 @@
+import Cookie from "js-cookie";
 export function convertUrlProfile(url) {
   return url
     ? url.substr(0, url.indexOf("upload") + 7) +
@@ -16,7 +17,11 @@ export function filterTextByWords(word, count) {
 }
 
 export function filterTextByCharacters(word, count) {
-  return word.substring(0, count) + "...";
+  if (word.length > count) {
+    return word.substring(0, count) + "...";
+  } else {
+    return word;
+  }
 }
 
 function getDay(day) {
@@ -52,5 +57,13 @@ export function newDate() {
   const d = new Date();
   return `${d.getFullYear()}-${
     d.getMonth() + 1
-  }-${d.getUTCDay()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}.${d.getMilliseconds()}`;
+  }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}.${d.getMilliseconds()}`;
+}
+
+export function getCookie() {
+  try {
+    return JSON.parse(Cookie.get("Auth") || {});
+  } catch (err) {
+    return null;
+  }
 }

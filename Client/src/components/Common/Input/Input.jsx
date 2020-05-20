@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import "./styles.scss";
 import Icon from "../Icon/Icon";
+import { useEffect } from "react";
 
 function Input(props) {
   const {
     icon,
     color,
     type,
+    name,
     value,
     onChange,
     onPressEnter,
@@ -52,20 +54,22 @@ function Input(props) {
         className="Input__input"
         type={type}
         value={value || ""}
+        name={name}
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
         onKeyDown={onKeyDown}
         spellCheck={false}
         style={{ color: textcolor }}
+        autocomplete="new-password"
       />
     </div>
   );
 }
 
 Input.propTypes = {
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
   placeholder: PropTypes.string.isRequired,
   icon: PropTypes.string,
   color: PropTypes.string,

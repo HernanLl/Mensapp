@@ -3,7 +3,7 @@ import "./styles.scss";
 import Icon from "../../Common/Icon/Icon";
 import Dropdown from "./Dropdown/Dropdown";
 export default function Navbar(props) {
-  const { onClickMessages, onClickUser, onClickConfig, setEdit } = props;
+  const { setEdit, openProfile } = props;
   return (
     <div className="Navbar">
       <div className="Navbar__user">
@@ -28,7 +28,7 @@ export default function Navbar(props) {
           pointer={true}
           onClick={() => setEdit(true)}
         />
-        <Dropdown />
+        <Dropdown openProfile={openProfile} />
       </div>
     </div>
   );

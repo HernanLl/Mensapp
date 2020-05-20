@@ -5,41 +5,54 @@ import {
   filterTextByWords,
   filterTextByCharacters,
   showDatetime,
+  convertUrlProfile,
 } from "../../../helper/helper";
 
 function Userbox(props) {
-  const { id, urlprofile, name, latestmessage, onClick } = props;
-  const { message, connected, countmessages, datetime } = latestmessage || {
+  const {
+    id,
+    urlprofile,
+    name,
+    connected,
+    latestmessage,
+    countmessages,
+    onClick,
+  } = props;
+  const { message, datetime } = latestmessage || {
     message: "",
     connected: false,
     countmessages: 0,
     datetime: "",
   };
-  const styles = connected
+  let styles = {};
+  styles.connected = connected
     ? { background: "#007E33" }
     : { background: "#CC0000" };
+  styles.datetime = countmessages != 0 ? { bottom: "5px" } : {};
+  const profile = convertUrlProfile(urlprofile);
+
   return (
     <div className="Userbox" onClick={() => onClick(id)}>
       <div className="Userbox__img">
-        <img src={urlprofile} />
+        <img alt="profile" src={profile} />
       </div>
       <div className="Userbox__data">
         <div className="Userbox__userinfo">
           <p className="Userbox__username">{filterTextByWords(name, 2)}</p>
-          <div className="Userbox__connected" style={styles}></div>
+          <div className="Userbox__connected" style={styles.connected}></div>
         </div>
         <p className="Userbox__latestmessage">
           {message && filterTextByCharacters(message, 15)}
         </p>
       </div>
-      {latestmessage && (
-        <div className="Userbox__info">
-          {countmessages && (
-            <p className="Userbox__countmessages">{countmessages}</p>
-          )}
+      <div className="Userbox__info">
+        {countmessages != 0 && (
+          <p className="Userbox__countmessages">{countmessages}</p>
+        )}
+        {datetime && (
           <p className="Userbox__datetime">{showDatetime(datetime)}</p>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

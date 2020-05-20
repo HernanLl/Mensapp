@@ -1,39 +1,67 @@
-//React and js-cookie
 import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
-import Cookie from "js-cookie";
-
-//components
+import { Context } from "../../../context/Context";
+import useWidget from "../../../HOC/useWidget";
+import { convertUrlProfile, getCookie } from "../../../helper/helper";
 import Input from "../../Common/Input/Input";
 import Textarea from "../../Common/Textarea/Textarea";
 import Icon from "../../Common/Icon/Icon";
 
-//HOC and context
-import { Context } from "../../../context/Context";
-import useWidget from "../../../HOC/useWidget";
-import { convertUrlProfile } from "../../../helper/helper";
-
 function RegisterComplete(props) {
   const { setSelectedImage, images } = props;
+  //context
+  const { setAuthenticated, socket, setDialog } = useContext(Context);
+  //form values
   const [urlprofile, setUrlprofile] = useState();
   const [urlbackground, setUrlbackground] = useState();
   const [location, setLocation] = useState("");
   const [state, setState] = useState("");
 
-  const { setAuthenticated, socket } = useContext(Context);
+  useEffect(() => {
+    if (!getCookie()) {
+      props.history.push("/");
+      setDialog({
+        type: "danger",
+        title: "No autorizado",
+        description: "Debe proporcionar credenciales",
+        display: true,
+        onClose: () => {
+          setDialog({});
+        },
+      });
+    }
+  }, []);
+
+  const onFinish = (e) => {
+    e.preventDefault();
+    const { token, refreshToken, id } = getCookie();
+    socket.emit("register complete", {
+      token,
+      refreshToken,
+      id,
+      urlprofile,
+      urlbackground,
+      state,
+      location,
+    });
+    props.history.push("/");
+    setAuthenticated(true);
+  };
 
   useEffect(() => {
     const abortController = new AbortController();
     navigator.geolocation.getCurrentPosition((position) => {
       const crd = position.coords;
       fetch(
-        `https://geocode.xyz/${crd.latitude},${crd.longitude}?json=1&auth=183676455000933134518x5813`,
+        `https://us1.locationiq.com/v1/reverse.php?key=pk.532b9c5eb60f602ee56fbd2bf8df58af&lat=${crd.latitude}&lon=${crd.longitude}&format=json`,
         {
           signal: abortController.signal,
         }
       )
         .then((res) => res.json())
-        .then((res) => setLocation(`${res.city}, ${res.country}`));
+        .then((res) =>
+          setLocation(`${res.address.city}, ${res.address.country}`)
+        );
     });
     return () => {
       abortController.abort();
@@ -45,25 +73,7 @@ function RegisterComplete(props) {
     setUrlbackground(images[1]);
   }, [images]);
 
-  const onFinish = (e) => {
-    e.preventDefault();
-    if (Cookie.get("Auth")) {
-      const { token, refreshToken, id } = JSON.parse(Cookie.get("Auth"));
-      socket.emit("register complete", {
-        token,
-        refreshToken,
-        id,
-        urlprofile,
-        urlbackground,
-        state,
-        location,
-      });
-      props.history.push("/");
-      setAuthenticated(true);
-    }
-  };
-
-  const profile = convertUrlProfile(images[0]);
+  const profile = convertUrlProfile(urlprofile);
   return (
     <div className="FormContainer scroll">
       <div className="FormContainer__brand">MENSAPP</div>
@@ -79,7 +89,7 @@ function RegisterComplete(props) {
             <div className="filter">
               <Icon name="CAMERA" size={75} color="white" />
             </div>
-            <img className="img" alt="profile" src={profile} />
+            <img className="img" src={profile} />
           </div>
         </div>
         <div className="row">
@@ -88,7 +98,7 @@ function RegisterComplete(props) {
             <div className="filter">
               <Icon name="CAMERA" size={75} color="white" />
             </div>
-            <img className="img" alt="background" src={urlbackground} />
+            <img className="img" src={urlbackground} />
           </div>
         </div>
         <Input
@@ -119,6 +129,9 @@ function RegisterComplete(props) {
   );
 }
 
-RegisterComplete.propTypes = {};
+RegisterComplete.propTypes = {
+  setSelectedImage: PropTypes.func,
+  images: PropTypes.array,
+};
 
 export default useWidget(RegisterComplete);

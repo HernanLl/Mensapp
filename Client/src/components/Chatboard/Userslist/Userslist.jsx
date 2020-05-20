@@ -11,29 +11,31 @@ function Userslist(props) {
   const [filterusers, setFilterusers] = useState([]);
   const [filterconversations, setFilterconversations] = useState([]);
 
-  const onChange = (e) => {
-    setValue(e.target.value);
-  };
-
   useEffect(() => {
-    const arr1 = users.filter(
+    const otherusers = users.filter(
       (elem) =>
         elem.name.toLowerCase().indexOf(value.toLowerCase()) === 0 &&
         !elem.latestmessage
     );
-    const arr2 = users.filter(
+    const conversations = users.filter(
       (elem) =>
         elem.name.toLowerCase().indexOf(value.toLowerCase()) === 0 &&
         elem.latestmessage
     );
-    setFilterusers(arr1);
-    setFilterconversations(arr2);
+    setFilterusers(otherusers);
+    setFilterconversations(conversations);
   }, [value, users]);
+
   return (
     <div className="Userslist">
-      <div className="Userslist__input">
+      <div className="Userslist__input__container">
         <Icon name="SEARCH" size={20} color="#ccc" />
-        <input value={value} onChange={onChange} placeholder="Buscar" />
+        <input
+          className="Userslist__input"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="Buscar"
+        />
       </div>
       {filterconversations.length > 0 && (
         <p className="Userslist__reference">Conversaciones recientes</p>
@@ -47,6 +49,9 @@ function Userslist(props) {
   );
 }
 
-Userslist.propTypes = {};
+Userslist.propTypes = {
+  users: PropTypes.array,
+  onClickUser: PropTypes.func,
+};
 
 export default Userslist;

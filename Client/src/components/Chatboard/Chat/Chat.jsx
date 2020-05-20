@@ -1,49 +1,45 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import PropTypes from "prop-types";
 import "./styles.scss";
+import { Context } from "../../../context/Context";
+import { newDate, getCookie } from "../../../helper/helper";
+
+//components
 import useList from "../../../Hooks/useList";
 import Message from "../../Common/Message/Message";
 import Icon from "../../Common/Icon/Icon";
-import { Context } from "../../../context/Context";
-import Cookie from "js-cookie";
-import { newDate } from "../../../helper/helper";
 
 function Chat(props) {
-  const { my, other, active, setActive } = props;
-  const { name, state, connected } = other || {
-    name: "",
-    state: "",
-    connected: false,
-  };
-  const { socket } = useContext(Context);
+  const { my, other, active, onNewMessage, onClickInfo } = props;
+  const { name = "", state = "" } = other;
+  //local state, actual message and list messages
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  //context and ref
+  const { socket } = useContext(Context);
   const myref = useRef(null);
-  useEffect(() => {
-    myref.current && myref.current.scrollIntoView();
-  }, [messages]);
 
+  //handlers to sending message
   const onPressEnter = (e) => {
     if (e.keyCode === 13) {
       onSendMessage();
     }
   };
-
   const onSendMessage = () => {
-    //setear bien el tiempo
+    //clearing input
+    setMessage("");
+    //update messages
     const newmessage = {
+      to: other.id,
+      from: my.id,
+      my: true,
       message,
       datetime: newDate(),
       urlprofile: my.urlprofile,
     };
-    let arr = messages.slice();
-    arr.push({ ...newmessage, my: true });
-    setMessages(arr);
-    setMessage("");
-    //enviar al servidor para que refresque al otro usuario
-    const { token = "", refreshToken = "", id = -1 } = JSON.parse(
-      Cookie.get("Auth")
-    );
+    setMessages([...messages, newmessage]);
+    //emit event for update messages to "from"
+    const { token = "", refreshToken = "", id = -1 } = getCookie();
     socket.emit("new message", {
       token,
       refreshToken,
@@ -51,20 +47,44 @@ function Chat(props) {
       newmessage,
       other: other.id,
     });
+    //update latestmessages in users
+    onNewMessage(newmessage);
   };
 
+  //handlers method for socket on events
   const handlerGetMessages = ({ messages }) => {
     const filteredmessages = messages.map((message) => {
-      return message.from === my.id ? { ...message, my: true } : message;
+      return message.from === my.id
+        ? {
+            ...message,
+            my: true,
+            urlprofile: my.urlprofile ? my.urlprofile : message.urlprofile,
+          }
+        : {
+            ...message,
+            my: false,
+            urlprofile: other.urlprofile
+              ? other.urlprofile
+              : message.urlprofile,
+          };
     });
     setMessages(filteredmessages);
   };
+  const handlerNewMessage = ({ from, message, datetime, urlprofile }) => {
+    const newmessage = {
+      from,
+      message,
+      datetime,
+      urlprofile,
+      to: my.id,
+    };
+    setMessages([...messages, newmessage]);
+  };
 
+  //useeffects
   useEffect(() => {
     if (other) {
-      const { token = "", refreshToken = "", id = "" } = JSON.parse(
-        Cookie.get("Auth")
-      );
+      const { token = "", refreshToken = "", id = "" } = getCookie();
       socket.emit("get messages", { token, refreshToken, id, other: other.id });
       socket.on("get messages", handlerGetMessages);
       return () => {
@@ -73,20 +93,26 @@ function Chat(props) {
     }
   }, [other]);
 
-  let styles = {};
-  styles.container = active
+  useEffect(() => {
+    myref.current && myref.current.scrollIntoView();
+  }, [messages]);
+
+  useEffect(() => {
+    if (my) {
+      socket.on("new message", handlerNewMessage);
+      return () => {
+        socket.off("new message", handlerNewMessage);
+      };
+    }
+  }, [my, messages]);
+
+  const stylecontainer = active
     ? { width: "calc(100% - 775px)" }
     : { width: "calc(100% - 425px)" };
-  styles.connected = connected
-    ? { background: "#007E33" }
-    : { background: "#CC0000" };
-  return other ? (
-    <div className="Chat" style={styles.container}>
-      <div className="Chat__info" onClick={() => setActive(true)}>
-        <div className="Info__user">
-          <p className="Info__name">{name}</p>
-          <div className="Info__connect" style={styles.connected}></div>
-        </div>
+  return other.id ? (
+    <div className="Chat" style={stylecontainer}>
+      <div className="Chat__info" onClick={() => onClickInfo()}>
+        <p className="Info__name">{name}</p>
         <p className="Info__state">{state}</p>
       </div>
       <div className="Chat__listMessages scroll">
@@ -100,13 +126,25 @@ function Chat(props) {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={onPressEnter}
+          disabled={other.erased}
         />
-        <Icon name="PLANE" size={50} pointer={true} onClick={onSendMessage} />
+        <Icon
+          hidden={other.erased}
+          name="PLANE"
+          size={50}
+          pointer={true}
+          onClick={onSendMessage}
+        />
       </div>
     </div>
   ) : null;
 }
 
-Chat.propTypes = {};
+Chat.propTypes = {
+  my: PropTypes.object,
+  other: PropTypes.object,
+  active: PropTypes.bool,
+  onNewMessage: PropTypes.func,
+};
 
 export default Chat;

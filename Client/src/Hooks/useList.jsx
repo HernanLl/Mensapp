@@ -1,7 +1,6 @@
 import React from "react";
 
 function useList(items, ItemComponent, onClick) {
-  console.log(items);
   return (
     <div style={{ width: "100%" }}>
       {items &&

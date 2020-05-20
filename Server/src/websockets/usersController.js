@@ -1,15 +1,19 @@
-const { decodedToken, verifyToken } = require("../utils/utils");
+const { decodedToken, verifyToken } = require("../helper/helper");
 const {
   userById,
   updateUser,
   getUsers,
   getLatestMessage,
   removeUser,
+  countMessagesNotViewed,
 } = require("../database/database");
 
-function usersController(socket, refreshTokens) {
+function usersController(socket, refreshTokens, sockets) {
   socket.on("user info", async function ({ token, refreshToken, id }) {
     if (verifyToken(token, refreshToken, refreshTokens, id, socket)) {
+      if (sockets.findIndex((e) => e.socket === socket) === -1) {
+        sockets.push({ socket, id });
+      }
       try {
         const {
           name,
@@ -28,10 +32,11 @@ function usersController(socket, refreshTokens) {
             location,
           },
         });
+        socket.broadcast.emit("user connected", id);
       } catch (err) {
         socket.emit("error server", {
-          code: 500,
-          message: "An unexpected error occurred in the database",
+          code: 401,
+          message: "Error internal server",
         });
       }
     } else {
@@ -53,7 +58,7 @@ function usersController(socket, refreshTokens) {
     urlbackground,
   }) {
     if (verifyToken(token, refreshToken, refreshTokens, id, socket)) {
-      await updateUser(id, name, null, null, null, null, state, location);
+      await updateUser({ id, name, state, location });
       //emit user info for update view
       socket.emit("user info", {
         user: {
@@ -77,9 +82,25 @@ function usersController(socket, refreshTokens) {
     if (verifyToken(token, refreshToken, refreshToken, id, socket)) {
       let users = await getUsers(id);
       for (let i = 0; i < users.length; i++) {
-        const latestmessage = await getLatestMessage(id, users[i].id);
+        let latestmessage = null,
+          countmessages = 0;
+        latestmessage = await getLatestMessage(id, users[i].id);
+        countmessages = await countMessagesNotViewed({
+          to: id,
+          from: users[i].id,
+        });
+        if (users[i].erased && latestmessage) {
+          latestmessage = { message: "CUENTA BORRADA" };
+        }
         users[i].latestmessage = latestmessage;
+        users[i].countmessages = countmessages;
+        const index = sockets.findIndex((e) => e.id === users[i].id);
+        if (index !== -1) users[i].connected = true;
       }
+      users = users.filter((user) => {
+        if (user.erased && !user.latestmessage) return false;
+        else return true;
+      });
       socket.emit("get users", { users });
     } else {
       socket.emit("error server", {

@@ -7,9 +7,13 @@ function NotFound() {
   return (
     <div className="NotFound">
       <img className="NotFound__img" src={sad} />
-      <p className="NotFound__description">
-        La pagina a la que quiere acceder no existe. Pruebe volviendo a la
-        pagina de <Link to="/">Inicio</Link>
+      <p className="NotFound__title">404</p>
+      <p className="NotFound__description">Page not found</p>
+      <p className="NotFound__reference">
+        Ir a{" "}
+        <Link className="link" to="/">
+          Inicio
+        </Link>
       </p>
     </div>
   );

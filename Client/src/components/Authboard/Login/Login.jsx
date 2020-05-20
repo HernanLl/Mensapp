@@ -1,15 +1,17 @@
 import React, { useState, useContext, useEffect } from "react";
-import PropTypes from "prop-types";
 import Cookie from "js-cookie";
-import Input from "../../Common/Input/Input";
 import { Link } from "react-router-dom";
 import { Context } from "../../../context/Context";
+import Input from "../../Common/Input/Input";
 
 function Login(props) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const { message, setMessage } = props;
+  //context
   const { setAuthenticated, socket } = useContext(Context);
+  //form values and error
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [error, setError] = useState("");
 
   const onLogin = (e) => {
     e.preventDefault();
@@ -21,10 +23,10 @@ function Login(props) {
       Cookie.set("Auth", { token, refreshToken, id });
       setAuthenticated(true);
     } else {
-      //poner el dialog
       setError(message);
     }
   };
+
   useEffect(() => {
     socket.on("login", handlerLogin);
     return () => {
@@ -37,15 +39,21 @@ function Login(props) {
       <div className="FormContainer__brand">MENSAPP</div>
       <form className="Form">
         <p className="font-2 m-1">Bienvenido</p>
+        {message && !error && (
+          <div className="Form__message Form__message-success">
+            <p>{message}</p>
+          </div>
+        )}
         {error && (
-          <div className="Form__error">
+          <div className="Form__message Form__message-error">
             <p>{error}</p>
           </div>
         )}
 
         <Input
-          icon="USER"
+          icon="EMAIL"
           color="#ccc"
+          name="email-login"
           type="email"
           value={email}
           onChange={(value) => setEmail(value)}
@@ -55,6 +63,7 @@ function Login(props) {
         <Input
           icon="KEY"
           color="#ccc"
+          name="password-login"
           type="password"
           value={password}
           onChange={(value) => setPassword(value)}
@@ -75,7 +84,5 @@ function Login(props) {
     </div>
   );
 }
-
-Login.propTypes = {};
 
 export default Login;
