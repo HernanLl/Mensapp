@@ -40,7 +40,8 @@ app.get("/verification/:token", (req, res) => {
 });
 app.post("/generateSignature", (req, res) => {
   const { params_to_sign, token, refreshToken, id } = req.body;
-  if (verifyToken(token, refreshToken, refreshTokens, id)) {
+  const userid = decodedToken(token);
+  if (userid) {
     const signature = cloudinary.utils.api_sign_request(
       params_to_sign,
       cloudinary.config().api_secret

@@ -2,9 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import "./styles.scss";
 import { showDatetime } from "../../../helper/helper";
+import { useState } from "react";
 
 function Message(props) {
-  const { my, message, datetime, urlprofile } = props;
+  const { my, message, datetime, urlprofile, urlimage } = props;
+  const [activepreview, setActivepreview] = useState(true);
   const styles = my
     ? {
         container: {
@@ -31,15 +33,37 @@ function Message(props) {
           right: "-15px",
         },
       };
+  styles.message = message
+    ? { ...styles.message, padding: "16px" }
+    : { ...styles.message };
   return (
     <div className="Message" style={styles.container}>
-      <div className="Message__img">
+      <div className="Message__profile">
         <img alt="profile" src={urlprofile} />
       </div>
-      <div className="Message__message" style={styles.message}>
-        <p>{message}</p>
-        <div className="Message__info" style={styles.info}>
-          <p>{showDatetime(datetime)}</p>
+      <div className="Message__container">
+        {activepreview && (
+          <div className="Message__preview">
+            <div className="Preview__cancel">
+              <div
+                className="Preview__handlerClick"
+                onClick={() => setActivepreview(false)}
+              ></div>
+              X
+            </div>
+            <img alt="profile" src={urlimage} />
+          </div>
+        )}
+        {urlimage && (
+          <div className="Message__img" onClick={() => setActivepreview(true)}>
+            <img alt="profile" src={urlimage} />
+          </div>
+        )}
+        <div className="Message__message" style={styles.message}>
+          <p>{message}</p>
+          <div className="Message__info" style={styles.info}>
+            <p>{showDatetime(datetime)}</p>
+          </div>
         </div>
       </div>
     </div>

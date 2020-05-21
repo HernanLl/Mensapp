@@ -32,7 +32,10 @@ function usersController(socket, refreshTokens, sockets) {
             location,
           },
         });
-        socket.broadcast.emit("user connected", id);
+        socket.broadcast.emit("user change connection", {
+          id,
+          connection: true,
+        });
       } catch (err) {
         socket.emit("error server", {
           code: 401,

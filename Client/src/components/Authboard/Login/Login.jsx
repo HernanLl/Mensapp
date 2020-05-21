@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import Cookie from "js-cookie";
 import { Link } from "react-router-dom";
 import { Context } from "../../../context/Context";
@@ -20,7 +20,7 @@ function Login(props) {
 
   const handlerLogin = ({ status, message, token, refreshToken, id }) => {
     if (status === 200) {
-      Cookie.set("Auth", { token, refreshToken, id });
+      Cookie.set("Auth", { token, refreshToken, id }, { expires: 14 });
       setAuthenticated(true);
     } else {
       setError(message);
@@ -59,6 +59,7 @@ function Login(props) {
           onChange={(value) => setEmail(value)}
           onPressEnter={() => {}}
           placeholder="Email"
+          autocomplete="new-password"
         />
         <Input
           icon="KEY"
@@ -69,6 +70,7 @@ function Login(props) {
           onChange={(value) => setPassword(value)}
           onPressEnter={() => {}}
           placeholder="Contraseña"
+          autocomplete="new-password"
         />
 
         <button className="Form__button" onClick={onLogin}>

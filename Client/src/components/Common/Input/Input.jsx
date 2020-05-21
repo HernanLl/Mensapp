@@ -16,6 +16,7 @@ function Input(props) {
     placeholder,
     helper,
     textcolor,
+    autocomplete,
   } = props;
   const [focus, setFocus] = useState(false);
 
@@ -24,7 +25,6 @@ function Input(props) {
       onPressEnter();
     }
   };
-
   const styles =
     focus || value
       ? {
@@ -43,7 +43,6 @@ function Input(props) {
           label: { color, fontSize: "20px" },
           iconColor: color,
         };
-
   return (
     <div className="Input" style={styles.container}>
       {icon && <Icon name={icon} size={30} color={styles.iconColor} />}
@@ -61,7 +60,7 @@ function Input(props) {
         onKeyDown={onKeyDown}
         spellCheck={false}
         style={{ color: textcolor }}
-        autocomplete="new-password"
+        autoComplete="off"
       />
     </div>
   );

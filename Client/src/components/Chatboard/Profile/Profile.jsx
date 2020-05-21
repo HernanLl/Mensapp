@@ -77,7 +77,7 @@ function Profile(props) {
 }
 
 Profile.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.number,
   name: PropTypes.string,
   location: PropTypes.string,
   state: PropTypes.string,

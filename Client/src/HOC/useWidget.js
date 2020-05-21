@@ -35,6 +35,8 @@ export default function useWidget(WrappedComponent) {
             apiKey: "459277451195346",
             uploadPreset: "goj1jntd",
             uploadSignature: generateSignature,
+            multiple: false,
+            cropping: true,
           },
           (error, result) => {
             if (!error && result && result.event === "success") {

@@ -34,7 +34,7 @@ function App(props) {
       setDialog({
         type: "danger",
         title: "No autorizado",
-        description: "Debe proporcionar credenciales",
+        description: message,
         display: true,
         onClose: () => {
           setDialog({});
@@ -42,13 +42,18 @@ function App(props) {
       });
     }
   };
-  const handlerNewToken = ({ newtoken, newrefreshtoken }) => {
-    const { token, refreshToken, id } = getCookie();
-    Cookie.set("Auth", {
-      token: newtoken || token,
-      refreshToken: newrefreshtoken || refreshToken,
-      id,
-    });
+  const handlerNewToken = ({ newtoken }) => {
+    alert("actualizando el token");
+    const { refreshToken, id } = getCookie();
+    Cookie.set(
+      "Auth",
+      {
+        token: newtoken,
+        refreshToken,
+        id,
+      },
+      { expires: 14 }
+    );
   };
   const handlerresize = () => {
     setRender(window.innerWidth >= 992);
@@ -60,7 +65,11 @@ function App(props) {
   };
   useEffect(() => {
     const location = window.location.protocol + "//" + window.location.host;
-    if (getCookie() && window.location.href === location + "/#/") {
+    if (
+      getCookie() &&
+      (window.location.href === location + "/#/" ||
+        window.location.href === location + "/")
+    ) {
       const { id, token, refreshToken } = getCookie();
       socket.emit("isAuthenticated", { id, token, refreshToken });
       socket.on("isAuthenticated", handlerAuthenticated);

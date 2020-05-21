@@ -11,7 +11,7 @@ function compareHash(password, hash) {
 }
 function generateToken(id) {
   return jwt.sign({ id }, process.env.SECRET, {
-    expiresIn: "30m",
+    expiresIn: "10m",
   });
 }
 function decodedToken(token) {
@@ -34,16 +34,19 @@ function verifyToken(token, refreshToken, refreshTokens, id, socket) {
     authorized = true;
   } else if (id && refreshTokens[refreshToken] === id) {
     const userid_refresh = decodedToken(refreshToken);
-    let newtoken = null,
-      newrefreshtoken = null;
+    let newtoken = null;
     if (!userid_refresh) {
       delete refreshTokens[refreshToken];
-      newrefreshtoken = generateRefreshToken(id);
-      refreshTokens[newrefreshtoken] = id;
+      authorized = false;
+      socket.emit("error server", {
+        code: 401,
+        message: "Access token or refresh token invalid",
+      });
+    } else {
+      newtoken = generateToken(id);
+      socket.emit("new token", { newtoken });
+      authorized = true;
     }
-    newtoken = generateToken(id);
-    socket.emit("new token", { newtoken, newrefreshtoken });
-    authorized = true;
   } else {
     socket.emit("error server", {
       code: 401,

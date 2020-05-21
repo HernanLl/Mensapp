@@ -6,11 +6,12 @@ import Login from "./Login/Login";
 import Register from "./Register/Register";
 import RegisterComplete from "./RegisterComplete/RegisterComplete";
 import { useState } from "react";
+import { useRef } from "react";
 
 function Authboard(props) {
   const [message, setMessage] = useState("");
   return (
-    <div className="Authboard">
+    <div id="tuvieja" className="Authboard">
       <div className="Authboard__image">
         <img src={file} />
       </div>

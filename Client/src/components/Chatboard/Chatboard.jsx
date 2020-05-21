@@ -109,13 +109,34 @@ function Chatboard() {
     }
   };
 
+  const handleChangeConnection = ({ id, connection }) => {
+    const index = users.findIndex((e) => e.id === id);
+    if (index !== -1) {
+      setUsers(
+        users.map((e) => {
+          if (e.id === id)
+            return {
+              ...e,
+              connected: connection,
+            };
+          else return e;
+        })
+      );
+    } else if (users) {
+      const { token = "", refreshToken = "", id = -1 } = getCookie();
+      socket.emit("get users", { token, refreshToken, id });
+    }
+  };
+
   //use effects
   useEffect(() => {
     socket.on("new message", handlerNewMessage);
     socket.on("user connected", handlerUserConnected);
+    socket.on("user change connection", handleChangeConnection);
     return () => {
       socket.off("new message", handlerNewMessage);
       socket.off("user connected", handlerUserConnected);
+      socket.off("user change connection", handleChangeConnection);
     };
   }, [users, other]);
 

@@ -33,7 +33,10 @@ function authController(socket, refreshTokens, sockets) {
           refreshTokens[refreshToken] = user.id;
           sockets.push({ socket, id });
           //emit new user connected
-          socket.broadcast.emit("user connected", id);
+          socket.broadcast.emit("user change connection", {
+            id,
+            connection: true,
+          });
         } else {
           status = 403;
           message = "Su email aun no fue verificado";
@@ -99,7 +102,6 @@ function authController(socket, refreshTokens, sockets) {
         state,
         location,
       });
-      socket.broadcast.emit("user connected");
     } else {
       socket.emit("error server", {
         code: 401,
@@ -128,6 +130,7 @@ function authController(socket, refreshTokens, sockets) {
         urlprofile: selectedImage === 0 ? newurl : null,
         urlbackground: selectedImage === 1 ? newurl : null,
       });
+      socket.broadcast.emit("user change connection", { id, connection: true });
     } else {
       socket.emit("error server", {
         code: 401,
@@ -138,7 +141,6 @@ function authController(socket, refreshTokens, sockets) {
 
   socket.on("isAuthenticated", async function ({ id, token, refreshToken }) {
     if (verifyToken(token, refreshToken, refreshTokens, id, socket)) {
-      console.log("hi");
       socket.emit("isAuthenticated", {});
     }
   });

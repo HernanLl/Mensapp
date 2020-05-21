@@ -6,10 +6,6 @@ const { usersController } = require("./src/websockets/usersController");
 const { messagesController } = require("./src/websockets/messagesController");
 
 let sockets = [];
-/**
- * Los sockets se guardaran en un arreglo de la forma [{socket,id}]
- *
- */
 
 io.on("connection", function (socket) {
   console.log("new user connected");
@@ -19,7 +15,12 @@ io.on("connection", function (socket) {
   socket.on("disconnect", () => {
     const index = sockets.findIndex((e) => e.socket === socket);
     if (index !== -1) {
+      const id = sockets[index].id;
       sockets.splice(index, 1);
+      io.emit("user change connection", {
+        id,
+        connection: false,
+      });
     }
     console.log("disconnect");
   });
