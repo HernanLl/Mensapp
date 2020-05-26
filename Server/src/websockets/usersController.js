@@ -104,6 +104,16 @@ function usersController(socket, refreshTokens, sockets) {
         if (user.erased && !user.latestmessage) return false;
         else return true;
       });
+      users = users.sort((a, b) => {
+        if (a.latestmessage && b.latestmessage) {
+          return b.latestmessage.datetime - a.latestmessage.datetime;
+        } else if (a.latestmessage) {
+          return -1;
+        } else if (b.latestmessage) {
+          return 1;
+        }
+        return 0;
+      });
       socket.emit("get users", { users });
     } else {
       socket.emit("error server", {

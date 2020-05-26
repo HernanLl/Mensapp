@@ -1,12 +1,12 @@
 import React, { useEffect, useContext } from "react";
 import "./styles.scss";
 import file from "../../assets/Board.svg";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import Login from "./Login/Login";
 import Register from "./Register/Register";
 import RegisterComplete from "./RegisterComplete/RegisterComplete";
 import { useState } from "react";
-import { useRef } from "react";
+import NotFound from "../NotFound/NotFound";
 
 function Authboard(props) {
   const [message, setMessage] = useState("");
@@ -30,6 +30,7 @@ function Authboard(props) {
             exact
           />
           <Route path="/signup/finish" component={RegisterComplete} exact />
+          <Route path="*" render={() => <Redirect to="/" />} />
         </Switch>
       </div>
     </div>

@@ -42,6 +42,9 @@ function Chatboard() {
       } else {
         handlerCheckAllMessages();
       }
+      const user = arr[index];
+      arr.splice(index, 1);
+      arr.unshift(user);
       setUsers(arr);
     }
   };
@@ -87,9 +90,6 @@ function Chatboard() {
   const handlerGetUsers = ({ users }) => {
     setUsers(users);
   };
-  const handlerNewMessage = (message) => {
-    onNewMessage(message);
-  };
   const handlerUserConnected = (id) => {
     const index = users.findIndex((e) => e.id === id);
     if (index !== -1) {
@@ -130,12 +130,10 @@ function Chatboard() {
 
   //use effects
   useEffect(() => {
-    socket.on("new message", handlerNewMessage);
-    socket.on("user connected", handlerUserConnected);
+    socket.on("new message", onNewMessage);
     socket.on("user change connection", handleChangeConnection);
     return () => {
-      socket.off("new message", handlerNewMessage);
-      socket.off("user connected", handlerUserConnected);
+      socket.off("new message", onNewMessage);
       socket.off("user change connection", handleChangeConnection);
     };
   }, [users, other]);
@@ -160,7 +158,11 @@ function Chatboard() {
   return (
     <div className="Chatboard">
       <Editprofile active={edit} setActive={setEdit} data={user} />
-      <Navbar setEdit={setEdit} openProfile={() => handlerClickInfo("user")} />
+      <Navbar
+        urlprofile={user.urlprofile}
+        setEdit={setEdit}
+        openProfile={() => handlerClickInfo("user")}
+      />
       <Userslist users={users} onClickUser={onClickUser} />
       <Chat
         other={other}

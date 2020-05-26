@@ -6,8 +6,8 @@ import { getCookie } from "../helper/helper";
 export default function useWidget(WrappedComponent) {
   return (props) => {
     const defaultImages = [
-      "https://res.cloudinary.com/dqiahaymp/image/upload/v1589148304/i1mtxj9nfxk0s29pmmrl.jpg",
-      "https://res.cloudinary.com/dqiahaymp/image/upload/v1588340109/lxgcj1sbngdfpiqwxdzc.jpg",
+      "https://res.cloudinary.com/dqiahaymp/image/upload/v1590419681/profiles/p6p3qwtz9mq135qy0eqe.jpg",
+      "https://res.cloudinary.com/dqiahaymp/image/upload/v1590419759/profiles/qsht38i88qnuthkutfhl.jpg",
     ];
     const [images, setImages] = useState(defaultImages);
     const [selectedImage, setSelectedImage] = useState(-1);

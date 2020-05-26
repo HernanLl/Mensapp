@@ -1,10 +1,14 @@
 import Cookie from "js-cookie";
-export function convertUrlProfile(url) {
-  return url
-    ? url.substr(0, url.indexOf("upload") + 7) +
-        "w_600,h_600,c_fill,g_face/" +
-        url.substr(url.indexOf("upload") + 7)
-    : "";
+export function convertUrlProfile(url, width = 600, gface = true) {
+  if (url && url.indexOf("upload") !== -1) {
+    return (
+      url.substr(0, url.indexOf("upload") + 7) +
+      `c_scale,w_${width}${gface ? ",c_fill,g_face" : ""}/` +
+      url.substr(url.indexOf("upload") + 7)
+    );
+  } else {
+    return url;
+  }
 }
 export function filterTextByWords(word, count) {
   let index = 0;

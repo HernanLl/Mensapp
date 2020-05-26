@@ -1,7 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { gmailTransport } = require("../config/nodemailer_config");
-const randtoken = require("rand-token");
 
 function generateHash(password) {
   return bcrypt.hashSync(password, 8);
@@ -43,8 +42,10 @@ function verifyToken(token, refreshToken, refreshTokens, id, socket) {
         message: "Access token or refresh token invalid",
       });
     } else {
-      newtoken = generateToken(id);
-      socket.emit("new token", { newtoken });
+      if (socket) {
+        newtoken = generateToken(id);
+        socket.emit("new token", { newtoken });
+      }
       authorized = true;
     }
   } else {
@@ -77,8 +78,8 @@ function getPublicId(url) {
   return publicid;
 }
 const defaultImages = [
-  "https://res.cloudinary.com/dqiahaymp/image/upload/v1589148304/i1mtxj9nfxk0s29pmmrl.jpg",
-  "https://res.cloudinary.com/dqiahaymp/image/upload/v1588340109/lxgcj1sbngdfpiqwxdzc.jpg",
+  "https://res.cloudinary.com/dqiahaymp/image/upload/v1590419681/profiles/p6p3qwtz9mq135qy0eqe.jpg",
+  "https://res.cloudinary.com/dqiahaymp/image/upload/v1590419759/profiles/qsht38i88qnuthkutfhl.jpg",
 ];
 
 module.exports = {

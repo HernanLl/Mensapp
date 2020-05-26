@@ -78,7 +78,7 @@ function authController(socket, refreshTokens, sockets) {
             link
         );
       } else {
-        status = 401;
+        status = 400;
         message = "Ya existe un usario con el mismo email";
       }
     }

@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState, createContext } from "react";
+import "babel-polyfill";
 import "./styles.scss";
 import Authboard from "./components/Authboard/Authboard";
 import Chatboard from "./components/ChatBoard/Chatboard";
@@ -40,6 +41,16 @@ function App(props) {
           setDialog({});
         },
       });
+    } else if (code === 400) {
+      setDialog({
+        type: "info",
+        title: "Datos invalidos",
+        description: message,
+        display: true,
+        onClose: () => {
+          setDialog({});
+        },
+      });
     }
   };
   const handlerNewToken = ({ newtoken }) => {
@@ -65,11 +76,7 @@ function App(props) {
   };
   useEffect(() => {
     const location = window.location.protocol + "//" + window.location.host;
-    if (
-      getCookie() &&
-      (window.location.href === location + "/#/" ||
-        window.location.href === location + "/")
-    ) {
+    if (getCookie() && window.location.href !== location + "/#/signup/finish") {
       const { id, token, refreshToken } = getCookie();
       socket.emit("isAuthenticated", { id, token, refreshToken });
       socket.on("isAuthenticated", handlerAuthenticated);
@@ -95,7 +102,10 @@ function App(props) {
     >
       {loading && <Loading />}
       {!loading && (
-        <div>
+        <div
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => e.preventDefault()}
+        >
           <Dialog
             type={type}
             title={title}

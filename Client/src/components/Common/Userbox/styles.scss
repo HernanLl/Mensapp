@@ -1,65 +1,69 @@
 .Userbox {
-    position: relative;
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 82px;
+  padding: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  &__img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    img {
+      width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+  }
+  &__data {
+    flex: 1;
+    padding: 0 16px;
+  }
+  &__userinfo {
     display: flex;
     align-items: center;
-    height: 82px;
-    padding: 16px;
-    cursor: pointer;
-    transition: background 0.2s;
-    &__img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        overflow: hidden;
-        img {
-            width: 100%;
-            min-height: 100%;
-            object-fit: cover;
-        }
-    }
-    &__data {
-        flex: 1;
-        padding: 0 16px;
-    }
-    &__userinfo {
-        display: flex;
-        align-items: center;
-    }
-    &__username {
-        font-size: 1.2rem;
-        font-weight: bold;
-    }
-    &__connected {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin: 0 16px;
-    }
-    &__latestmessage {
-        color: #ccc;
-        font-style: italic;
-    }
-    &__info {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        right: 0;
-        padding: 0 5px;
-    }
-    &__countmessages {
-        border-radius: 50%;
-        background: #79c7f9;
-        color: white;
-        width: 20px;
-        padding: 2px 5px;
-    }
-    &__datetime {
-        margin: 2px 0;
-        color: #ccc;
-    }
-    &:hover {
-        background: #dbdbdb;
-    }
+  }
+  &__username {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  &__connected {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0 16px;
+  }
+  &__latestmessage {
+    color: #ccc;
+    font-style: italic;
+  }
+  &__info {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    right: 0;
+    padding: 0 5px;
+  }
+  &__countmessages {
+    border-radius: 50%;
+    background: #79c7f9;
+    color: white;
+    width: 20px;
+    padding: 2px 5px;
+    margin: 8px 0;
+  }
+  &__datetime {
+    font-size: 14px;
+    margin: 2px 0;
+    color: #ccc;
+    margin: 0 8px;
+  }
+  &:hover {
+    background: #dbdbdb;
+  }
 }

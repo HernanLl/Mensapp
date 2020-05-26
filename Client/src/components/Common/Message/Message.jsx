@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import "./styles.scss";
-import { showDatetime } from "../../../helper/helper";
+import { showDatetime, convertUrlProfile } from "../../../helper/helper";
 import { useState } from "react";
 
 function Message(props) {
   const { my, message, datetime, urlprofile, urlimage } = props;
-  const [activepreview, setActivepreview] = useState(true);
+  const [activepreview, setActivepreview] = useState(false);
+  const myref = useRef(null);
+
+  useEffect(() => {
+    if (activepreview) myref.current.focus();
+  }, [activepreview]);
+
   const styles = my
     ? {
         container: {
@@ -35,7 +41,8 @@ function Message(props) {
       };
   styles.message = message
     ? { ...styles.message, padding: "16px" }
-    : { ...styles.message };
+    : { ...styles.message, padding: "0" };
+  styles.img = my ? { marginLeft: "auto" } : {};
   return (
     <div className="Message" style={styles.container}>
       <div className="Message__profile">
@@ -43,7 +50,14 @@ function Message(props) {
       </div>
       <div className="Message__container">
         {activepreview && (
-          <div className="Message__preview">
+          <div
+            className="Message__preview"
+            tabIndex="1"
+            ref={myref}
+            onKeyDown={(e) => {
+              setActivepreview(false);
+            }}
+          >
             <div className="Preview__cancel">
               <div
                 className="Preview__handlerClick"
@@ -51,12 +65,16 @@ function Message(props) {
               ></div>
               X
             </div>
-            <img alt="profile" src={urlimage} />
+            <img alt="message" src={urlimage} />
           </div>
         )}
         {urlimage && (
-          <div className="Message__img" onClick={() => setActivepreview(true)}>
-            <img alt="profile" src={urlimage} />
+          <div
+            className="Message__img"
+            onClick={() => setActivepreview(true)}
+            style={styles.img}
+          >
+            <img alt="message" src={convertUrlProfile(urlimage, 250, false)} />
           </div>
         )}
         <div className="Message__message" style={styles.message}>
@@ -73,8 +91,8 @@ function Message(props) {
 Message.propTypes = {
   my: PropTypes.bool,
   datetime: PropTypes.string,
-  message: PropTypes.string.isRequired,
-  urlprofile: PropTypes.string.isRequired,
+  message: PropTypes.string,
+  urlprofile: PropTypes.string,
 };
 
 export default Message;

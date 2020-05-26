@@ -13,6 +13,9 @@ const {
   REMOVEUSER,
   COUNTMESSAGESNOTVIEWED,
   CHECKALLMESSAGES,
+  SETNEWPENDING,
+  CLEARURLPENDING,
+  ALLPENDINGS,
 } = require("./querys");
 const { defaultImages } = require("../helper/helper");
 
@@ -108,22 +111,15 @@ async function getMessages(id, other) {
     return err;
   }
 }
-async function saveMessage({
-  to,
-  from,
-  message,
-  datetime,
-  urlprofile,
-  viewed,
-}) {
+async function saveMessage({ to, from, message, datetime, viewed, urlimage }) {
   try {
     await pool.query(SAVEMESSAGE, [
       to,
       from,
       message,
       datetime,
-      urlprofile,
       viewed,
+      urlimage,
     ]);
   } catch (err) {
     console.log(err);
@@ -151,6 +147,28 @@ async function checkAllMessages({ to, from }) {
     console.log(err);
   }
 }
+async function setNewPending(url) {
+  try {
+    await pool.query(SETNEWPENDING, [url, Date.now()]);
+  } catch (err) {
+    console.log(err);
+  }
+}
+async function clearUrlPending(url) {
+  try {
+    await pool.query(CLEARURLPENDING, [url]);
+  } catch (err) {
+    console.log(err);
+  }
+}
+async function allPendings(url) {
+  try {
+    const res = await pool.query(ALLPENDINGS);
+    return res.rows;
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 module.exports = {
   userById,
@@ -165,4 +183,7 @@ module.exports = {
   getLatestMessage,
   countMessagesNotViewed,
   checkAllMessages,
+  setNewPending,
+  clearUrlPending,
+  allPendings,
 };

@@ -4,6 +4,7 @@ const {
   saveMessage,
   checkAllMessages,
   userById,
+  clearUrlPending,
 } = require("../database/database");
 
 function messagesController(socket, refreshTokens, sockets) {
@@ -31,26 +32,35 @@ function messagesController(socket, refreshTokens, sockets) {
     other,
   }) {
     if (verifyToken(token, refreshToken, refreshTokens, id)) {
-      const { message, datetime, urlprofile } = newmessage;
+      const { message, datetime, urlimage } = newmessage;
       const user = await userById(other);
-      console.log(user.erased);
       if (user && !user.erased) {
-        await saveMessage({
-          to: other,
-          from: id,
-          message,
-          datetime,
-          urlprofile,
-          viewed: false,
-        });
-        const socket_other = sockets.find((e) => e.id === other);
-        if (socket_other) {
-          socket_other.socket.emit("new message", {
+        if (!message && !urlimage) {
+          socket.emit("error server", {
+            code: 400,
+            message: "Debe ingresar un mensaje o una imagen",
+          });
+        } else {
+          await saveMessage({
+            to: other,
             from: id,
             message,
             datetime,
-            urlprofile,
+            viewed: false,
+            urlimage,
           });
+          const socket_other = sockets.find((e) => e.id === other);
+          if (socket_other) {
+            socket_other.socket.emit("new message", {
+              from: id,
+              message,
+              datetime,
+              urlimage,
+            });
+          }
+          console.log(urlimage);
+          await clearUrlPending(urlimage);
+          // TODO - verificar la lista de pendientes, si urlimage esta borrarla
         }
       }
     } else {

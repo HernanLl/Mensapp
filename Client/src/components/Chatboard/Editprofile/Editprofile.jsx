@@ -60,9 +60,7 @@ function Editprofile(props) {
     });
   };
 
-  const style = active
-    ? { width: "calc(100% - 75px)" }
-    : { width: "0px", overflow: "hidden" };
+  const style = active ? { left: "75px" } : { left: "-100%" };
   const profile = convertUrlProfile(urlprofile);
   return (
     <div className="Editprofile scroll" style={style}>

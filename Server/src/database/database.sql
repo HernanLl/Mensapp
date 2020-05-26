@@ -1,26 +1,3 @@
-users{
-	id serial primary key,
-	name varchar(128),
-	email varchar(512),
-	password varchar(512),
-	state varchar(512),
-	location varchar(128),
-	urlprofile varchar(512),
-	urlbackground varchar(512),
-	verified boolean,
-	erased boolean
-}
-messages{
-	to references users.id,
-	from references users.id,
-	message text,
-	datetime timestamp,
-	urlprofile varchar(512),
-	viewed boolean,
-	urlimage varchar(512)
-}
-
-//postgres
 create table users(
 	id serial primary key,
 	name varchar(128) not null,
@@ -38,7 +15,10 @@ create table messages(
 	"from" integer references users(id),
 	message text,
 	"datetime" timestamp,
-	urlprofile varchar(512),
 	viewed boolean,
 	urlimage varchar(512)
+);
+create table pendings(
+	"url" varchar(512),
+	"date" bigint
 );

@@ -23,12 +23,46 @@
     }
   }
   &__listMessages {
+    position: relative;
     flex: 1;
     height: calc(100vh - 150px);
     overflow: hidden auto;
+    outline: none;
+    padding-bottom: 56px;
+  }
+  &__loadfile {
+    position: fixed;
+    z-index: 2;
+    height: calc(100vh - 150px);
+    background-color: #eee;
+    padding: 32px;
+    overflow: hidden;
+    transition: width 1s;
+  }
+  &__loadfile__border {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 2px solid #ccc;
+    border-style: dashed;
+    height: 100%;
+    width: 100%;
+    img {
+      position: absolute;
+      width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+      background-color: steelblue;
+    }
+    p {
+      margin: auto;
+      color: #ccc;
+      font-size: 2rem;
+    }
   }
   &__input {
     display: flex;
+    align-items: center;
     height: 50px;
     width: 100%;
     input {
@@ -38,10 +72,15 @@
       border: none;
       padding: 0 1rem;
       font-size: 18px;
+      outline: none;
     }
     .Icon {
       background: #eef0f2;
       padding: 10px;
     }
+  }
+  &__mostmessages {
+    display: flex;
+    justify-content: center;
   }
 }
