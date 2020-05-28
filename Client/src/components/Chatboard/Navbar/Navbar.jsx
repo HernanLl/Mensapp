@@ -2,12 +2,17 @@ import React from "react";
 import "./styles.scss";
 import Icon from "../../Common/Icon/Icon";
 import Dropdown from "./Dropdown/Dropdown";
+import { convertUrlProfile } from "../../../helper/helper";
 export default function Navbar(props) {
   const { urlprofile, setEdit, openProfile } = props;
   return (
     <div className="Navbar">
       <div className="Navbar__user">
-        <img className="Navbar__userimage" src={urlprofile} alt="user" />
+        <img
+          className="Navbar__userimage"
+          src={convertUrlProfile(urlprofile)}
+          alt="user"
+        />
       </div>
       <div className="Navbar__Icons">
         <Icon

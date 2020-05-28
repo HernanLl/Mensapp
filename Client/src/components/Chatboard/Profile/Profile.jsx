@@ -31,7 +31,7 @@ function Profile(props) {
   styles.container =
     profileloaded && backgroundloaded ? {} : { display: "none" };
   //convert url image to focus face
-  const profile = convertUrlProfile(urlprofile);
+  const profile = convertUrlProfile(urlprofile, 600, true);
   return (
     <div className="Profile" style={styles.profile}>
       <div className="Profile__container" style={styles.container}>

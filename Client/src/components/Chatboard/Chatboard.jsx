@@ -90,25 +90,6 @@ function Chatboard() {
   const handlerGetUsers = ({ users }) => {
     setUsers(users);
   };
-  const handlerUserConnected = (id) => {
-    const index = users.findIndex((e) => e.id === id);
-    if (index !== -1) {
-      setUsers(
-        users.map((e) => {
-          if (e.id === id)
-            return {
-              ...e,
-              connected: true,
-            };
-          else return e;
-        })
-      );
-    } else if (users) {
-      const { token = "", refreshToken = "", id = -1 } = getCookie();
-      socket.emit("get users", { token, refreshToken, id });
-    }
-  };
-
   const handleChangeConnection = ({ id, connection }) => {
     const index = users.findIndex((e) => e.id === id);
     if (index !== -1) {
@@ -127,14 +108,28 @@ function Chatboard() {
       socket.emit("get users", { token, refreshToken, id });
     }
   };
-
+  const handleChangeUser = ({ user }) => {
+    if (user.id === other.id) {
+      setOther(user);
+      setUsers(
+        users.map((_user) => {
+          if (_user.id === user.id) {
+            return { ..._user, ...user };
+          } else return user;
+        })
+      );
+    }
+  };
   //use effects
   useEffect(() => {
     socket.on("new message", onNewMessage);
-    socket.on("user change connection", handleChangeConnection);
+    socket.on("change user connection", handleChangeConnection);
+    socket.on("change user", handleChangeUser);
+
     return () => {
       socket.off("new message", onNewMessage);
-      socket.off("user change connection", handleChangeConnection);
+      socket.off("change user connection", handleChangeConnection);
+      socket.off("change user", handleChangeUser);
     };
   }, [users, other]);
 

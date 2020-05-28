@@ -19,6 +19,14 @@ messages{
 	viewed boolean,
 	urlimage varchar(512)
 }
+pendings{
+	"url" varchar(512),
+	"date" bigint
+}
+tokens{
+	token varchar(512),
+	id integer
+}
 
 //postgres
 create table users(
@@ -41,4 +49,8 @@ create table messages(
 	urlprofile varchar(512),
 	viewed boolean,
 	urlimage varchar(512)
+);
+create table pendings(
+	"url" varchar(512),
+	"date" bigint
 );

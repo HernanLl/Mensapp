@@ -79,9 +79,7 @@ function RegisterComplete(props) {
       <div className="FormContainer__brand">MENSAPP</div>
       <form className="Form">
         <p className="Form__description">
-          Para finalizar el registro, ingrese a su correo para verificar su
-          cuenta. A continuación ingrese algunos datos mas para completar su
-          registro
+          Ingrese algunos datos mas para completar su registro
         </p>
         <div className="row">
           <p className="font-1 mx-1">Imagen de perfil</p>

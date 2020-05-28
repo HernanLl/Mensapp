@@ -15,13 +15,13 @@ export default function useWidget(WrappedComponent) {
     const { socket } = useContext(Context);
 
     const generateSignature = (cb, params_to_sign) => {
-      const { token, refreshToken, id } = getCookie();
       fetch("http://localhost:3000/generateSignature", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ params_to_sign, token, refreshToken, id }),
+        body: JSON.stringify({ params_to_sign }),
       })
         .then((res) => res.json())
         .then((res) => cb(res));

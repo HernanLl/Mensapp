@@ -1,9 +1,9 @@
 import Cookie from "js-cookie";
-export function convertUrlProfile(url, width = 600, gface = true) {
+export function convertUrlProfile(url, size = 600, gface = true) {
   if (url && url.indexOf("upload") !== -1) {
     return (
       url.substr(0, url.indexOf("upload") + 7) +
-      `c_scale,w_${width}${gface ? ",c_fill,g_face" : ""}/` +
+      `h_${size},w_${size}${gface ? ",c_fill,g_face" : ""}/` +
       url.substr(url.indexOf("upload") + 7)
     );
   } else {

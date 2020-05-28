@@ -4,6 +4,7 @@ const app = express();
 const cors = require("cors");
 const cloudinary = require("cloudinary").v2;
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const upload = require("./src/config/multer");
 const fs = require("fs");
 const {
@@ -15,14 +16,15 @@ const {
   verifyEmail,
   allPendings,
   clearUrlPending,
+  getTokens,
+  saveToken,
 } = require("./src/database/database");
-
-var refreshTokens = {};
 
 //Server configuration
 app.set("port", process.env.PORT || 3000);
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cookieParser());
+app.use(cors({ credentials: true, origin: "http://localhost:3030" }));
 app.use(express.static(path.join(__dirname, "dist")));
 
 //Server routes
@@ -31,11 +33,9 @@ app.get("/verification/:token", (req, res) => {
   const id = decodedToken(token);
   if (id) {
     verifyEmail(id);
-    //res.cookie();
-
     //generate tokens
     const refreshToken = generateRefreshToken(id);
-    refreshTokens[refreshToken] = id;
+    saveToken(refreshToken, id);
     res.cookie("Auth", JSON.stringify({ id, token, refreshToken }));
     res.redirect("/#/signup/finish");
   } else {
@@ -43,32 +43,48 @@ app.get("/verification/:token", (req, res) => {
   }
 });
 app.post("/generateSignature", (req, res) => {
-  const { params_to_sign, token } = req.body;
-  const userid = decodedToken(token);
-  if (userid) {
+  const auth = JSON.parse(req.cookies.Auth);
+  const { params_to_sign } = req.body;
+  if (decodedToken(auth.token)) {
     const signature = cloudinary.utils.api_sign_request(
       params_to_sign,
       cloudinary.config().api_secret
     );
     res.json({ signature });
+  } else {
+    res.status(401).json({ message: "No autorizado, credenciales invalidas" });
   }
 });
 app.post("/loadfile", upload.single("loadfile"), (req, res) => {
+  const auth = JSON.parse(req.cookies.Auth);
   const file = req.file;
   const _path = path.join(__dirname, "uploads", file.originalname);
-  cloudinary.uploader.upload(_path, { folder: "messages" }, (err, result) => {
-    fs.unlinkSync(_path);
-    if (err) {
-      console.log(err);
-      res.status(500).json({
-        message:
-          "Ocurrio un error con el servidor de imagenes, intentelo mas tarde",
-      });
-      res.end();
+  if (decodedToken(auth.token)) {
+    if (/(.jpg|.png|.jpeg)/i.test(file.originalname)) {
+      cloudinary.uploader.upload(
+        _path,
+        { folder: "messages" },
+        (err, result) => {
+          if (err) {
+            console.log(err);
+            res.status(500).json({
+              message:
+                "Ocurrio un error con el servidor de imagenes, intentelo mas tarde",
+            });
+            res.end();
+          } else {
+            res.status(200).json({ url: result.url });
+          }
+          fs.unlinkSync(_path);
+        }
+      );
     } else {
-      res.status(200).json({ url: result.url });
+      fs.unlinkSync(_path);
     }
-  });
+  } else {
+    fs.unlinkSync(_path);
+    res.status(401).json({ message: "No autorizado, credenciales invalidas" });
+  }
 });
 
 //init server
@@ -86,4 +102,4 @@ const server = app.listen(app.get("port"), () => {
   console.log("Server on port " + app.get("port"));
 });
 
-module.exports = { server, refreshTokens };
+module.exports = { server };

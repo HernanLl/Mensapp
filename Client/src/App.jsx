@@ -1,16 +1,19 @@
 import React, { useContext, useEffect, useState, createContext } from "react";
 import "babel-polyfill";
 import "./styles.scss";
-import Authboard from "./components/Authboard/Authboard";
-import Chatboard from "./components/ChatBoard/Chatboard";
 import { Context } from "./context/Context";
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import Cookie from "js-cookie";
 import io from "socket.io-client";
-import NotFound from "./components/NotFound/NotFound";
 import { getCookie } from "./helper/helper";
-import Dialog from "./components/Common/Dialog/Dialog";
-import Loading from "./components/Common/Loading/Loading";
+
+//react components
+import Dialog from "./components/Common/Dialog";
+import Loading from "./components/Common/Loading";
+import Authboard from "./components/Authboard";
+import Chatboard from "./components/ChatBoard";
+import NotFound from "./components/NotFound";
+
 const socket = io("http://localhost:3000/", { rejectUnauthorized: false });
 
 function App(props) {
@@ -30,6 +33,7 @@ function App(props) {
 
   const handlerError = ({ code, message }) => {
     if (code === 401 || code === 403 || code === 500) {
+      alert(code);
       Cookie.remove("Auth");
       setAuthenticated(false);
       setDialog({
@@ -54,7 +58,6 @@ function App(props) {
     }
   };
   const handlerNewToken = ({ newtoken }) => {
-    alert("actualizando el token");
     const { refreshToken, id } = getCookie();
     Cookie.set(
       "Auth",
@@ -85,7 +88,6 @@ function App(props) {
       setLoading(false);
     }
   }, []);
-
   useEffect(() => {
     socket.on("error server", handlerError);
     socket.on("new token", handlerNewToken);

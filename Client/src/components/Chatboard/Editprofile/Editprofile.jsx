@@ -7,7 +7,6 @@ import Textarea from "../../Common/Textarea/Textarea";
 import useWidget from "../../../HOC/useWidget";
 import { convertUrlProfile, getCookie } from "../../../helper/helper";
 import { Context } from "../../../context/Context";
-import Cookie from "js-cookie";
 
 function Editprofile(props) {
   const {

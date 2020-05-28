@@ -22,3 +22,7 @@ create table pendings(
 	"url" varchar(512),
 	"date" bigint
 );
+create table tokens(
+	token varchar(512),
+	id integer references users(id)
+);

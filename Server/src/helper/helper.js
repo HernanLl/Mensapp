@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { gmailTransport } = require("../config/nodemailer_config");
+const { getTokens } = require("../database/database");
 
 function generateHash(password) {
   return bcrypt.hashSync(password, 8);
@@ -15,6 +16,14 @@ function generateToken(id) {
 }
 function decodedToken(token) {
   try {
+    const decoded = jwt.decode(token, process.env.SECRET);
+    return decoded.id;
+  } catch (err) {
+    return null;
+  }
+}
+function verifyToken(token) {
+  try {
     const decoded = jwt.verify(token, process.env.SECRET);
     return decoded.id;
   } catch (err) {
@@ -26,20 +35,20 @@ function generateRefreshToken(id) {
     expiresIn: "14 days",
   });
 }
-function verifyToken(token, refreshToken, refreshTokens, id, socket) {
+async function verifyCredentials(token, refreshToken, id, socket) {
+  const refreshTokens = await getTokens();
   let authorized = false;
-  const userid = decodedToken(token);
+  const userid = verifyToken(token);
   if (userid) {
     authorized = true;
   } else if (id && refreshTokens[refreshToken] === id) {
-    const userid_refresh = decodedToken(refreshToken);
+    const userid_refresh = verifyToken(refreshToken);
     let newtoken = null;
     if (!userid_refresh) {
-      delete refreshTokens[refreshToken];
       authorized = false;
       socket.emit("error server", {
         code: 401,
-        message: "Access token or refresh token invalid",
+        message: "No autorizado, credenciales invalidas",
       });
     } else {
       if (socket) {
@@ -49,9 +58,10 @@ function verifyToken(token, refreshToken, refreshTokens, id, socket) {
       authorized = true;
     }
   } else {
+    console.log("no hay un refresh token o es invalido");
     socket.emit("error server", {
       code: 401,
-      message: "Access token or refresh token invalid",
+      message: "No autorizado, credenciales invalidas",
     });
   }
   return authorized;
@@ -90,6 +100,6 @@ module.exports = {
   generateRefreshToken,
   sendEmail,
   getPublicId,
-  verifyToken,
+  verifyCredentials,
   defaultImages,
 };

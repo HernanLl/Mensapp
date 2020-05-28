@@ -1,30 +1,37 @@
 require("dotenv").config();
-const { server, refreshTokens } = require("./app");
+const { server } = require("./app");
 const io = require("socket.io")(server);
-const { authController } = require("./src/websockets/authController");
-const { usersController } = require("./src/websockets/usersController");
-const { messagesController } = require("./src/websockets/messagesController");
-const { uploadController } = require("./src/websockets/uploadController");
+const { authController } = require("./src/controllers/authController");
+const { usersController } = require("./src/controllers/usersController");
+const { messagesController } = require("./src/controllers/messagesController");
+const { uploadsController } = require("./src/controllers/uploadsController");
 
 let sockets = [];
+let timers = [];
 
 io.on("connection", function (socket) {
   console.log("new user connected");
-  authController(socket, refreshTokens, sockets);
-  usersController(socket, refreshTokens, sockets);
-  messagesController(socket, refreshTokens, sockets);
-  uploadController(socket, refreshTokens, sockets);
+  authController(socket, sockets);
+  usersController(socket, sockets, timers);
+  messagesController(socket, sockets);
+  uploadsController(socket, sockets);
 
   socket.on("disconnect", () => {
     const index = sockets.findIndex((e) => e.socket === socket);
+    const timer = setTimeout(() => {
+      if (index !== -1) {
+        const id = sockets[index].id;
+        sockets.splice(index, 1);
+        io.emit("change user connection", {
+          id,
+          connection: false,
+        });
+      }
+    }, 1000 * 60 * 10);
     if (index !== -1) {
-      const id = sockets[index].id;
-      sockets.splice(index, 1);
-      io.emit("user change connection", {
-        id,
-        connection: false,
-      });
+      timers.push({ id: sockets[index].id, timer });
     }
+
     console.log("disconnect");
   });
 });

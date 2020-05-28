@@ -31,6 +31,9 @@ const CHECKALLMESSAGES = `UPDATE messages SET viewed=true WHERE "to"=$1 and "fro
 const SETNEWPENDING = `INSERT INTO pendings VALUES($1,$2)`;
 const CLEARURLPENDING = `DELETE FROM pendings WHERE "url"=$1`;
 const ALLPENDINGS = `SELECT * FROM pendings`;
+const GETTOKENS = `SELECT * FROM tokens`;
+const UPDATETOKEN = `UPDATE tokens SET "token"=$1 where id=$2`;
+const SAVETOKEN = `INSERT INTO tokens VALUES($1,$2)`;
 
 module.exports = {
   USERBYID,
@@ -49,4 +52,7 @@ module.exports = {
   SETNEWPENDING,
   CLEARURLPENDING,
   ALLPENDINGS,
+  GETTOKENS,
+  UPDATETOKEN,
+  SAVETOKEN,
 };

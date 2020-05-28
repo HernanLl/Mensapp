@@ -18,6 +18,7 @@ function Chat(props) {
   const [loadfile, setLoadfile] = useState(false); //used to render container to drop images
   const [urlload, setUrlload] = useState(""); //contains the url of the dropped image
   const [file, setFile] = useState(); //contains File element js result of drop image
+  const [quantity, setQuantity] = useState(1); // used to reduce the number of messages
   //context and refs for handler focus
   const { socket, setDialog } = useContext(Context);
   const scroll_ref = useRef(null);
@@ -30,10 +31,36 @@ function Chat(props) {
     }
   };
   const onDrop = (e) => {
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setFile(e.dataTransfer.files[0]);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 1) {
+      setLoadfile(false);
+      setDialog({
+        type: "info",
+        title: "Error al cargar",
+        description: "No puede ingresar mas de una imagen a la vez",
+        display: true,
+        onClose: () => {
+          setDialog({});
+        },
+      });
+    } else if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const isimage = /(jpg|png|jpeg)/i.test(e.dataTransfer.files[0].name);
+      if (!isimage) {
+        setLoadfile(false);
+        setDialog({
+          type: "info",
+          title: "Archivo no permitido",
+          description:
+            "Solo son compatibles archivos de imagen (jpg | jpeg | png)",
+          display: true,
+          onClose: () => {
+            setDialog({});
+          },
+        });
+      } else {
+        setFile(e.dataTransfer.files[0]);
+        input_ref.current.focus();
+      }
     }
-    input_ref.current.focus();
   };
   const onSendMessage = async () => {
     if (!file && !inputmessage && !urlload) {
@@ -65,6 +92,7 @@ function Chat(props) {
         formData.append("loadfile", file);
         const options = {
           method: "POST",
+          credentials: "include",
           body: formData,
         };
         const { url } = await (
@@ -84,69 +112,17 @@ function Chat(props) {
       onNewMessage(newmessage);
     }
   };
-  const handlerGetMessages = ({ messages }) => {
-    const filteredmessages = messages.map((message) => {
-      return message.from === my.id
-        ? {
-            ...message,
-            my: true,
-            urlprofile: my.urlprofile,
-          }
-        : {
-            ...message,
-            my: false,
-            urlprofile: other.urlprofile,
-          };
-    });
-    setMessages(filteredmessages);
-  };
-  const handlerNewMessage = ({ from, message, datetime, urlimage }) => {
-    const newmessage = {
-      from,
-      message,
-      datetime,
-      urlprofile: from === my.id ? my.urlprofile : other.urlprofile,
-      to: my.id,
-      urlimage,
-    };
-    setMessages([...messages, newmessage]);
-  };
-  useEffect(() => {
-    if (file) {
-      if (file.type.indexOf("image") === 0) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setUrlload(reader.result);
-        };
-        reader.readAsDataURL(file);
-      } else {
-        setLoadfile(false);
-        setFile(null);
-        setDialog({
-          type: "info",
-          title: "Archivo no permitido",
-          description:
-            "Solo son compatibles archivos de imagen (jpg | jpeg | png)",
-          display: true,
-          onClose: () => {
-            setDialog({});
-          },
-        });
-      }
-    }
-  }, [file]);
 
   const generateSignature = async (cb, params_to_sign) => {
     if (getCookie()) {
-      const { token } = getCookie();
       const options = {
+        credentials: "include",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           params_to_sign,
-          token,
         }),
       };
       const res = await (
@@ -155,7 +131,6 @@ function Chat(props) {
       cb(res);
     }
   };
-
   const openWidget = () => {
     cloudinary.openUploadWidget(
       {
@@ -183,30 +158,66 @@ function Chat(props) {
     );
   };
 
-  //useeffects
+  //handlers to socket events
+  const handlerGetMessages = ({ messages }) => {
+    const filteredmessages = messages.map((message) => {
+      return message.from === my.id
+        ? {
+            ...message,
+            my: true,
+            urlprofile: my.urlprofile,
+          }
+        : {
+            ...message,
+            my: false,
+            urlprofile: other.urlprofile,
+          };
+    });
+    setMessages(filteredmessages);
+  };
+  const handlerNewMessage = ({ from, message, datetime, urlimage }) => {
+    const newmessage = {
+      from,
+      message,
+      datetime,
+      urlprofile: from === my.id ? my.urlprofile : other.urlprofile,
+      to: my.id,
+      urlimage,
+    };
+    setMessages([...messages, newmessage]);
+  };
+  //useeffect to socket events
+  useEffect(() => {
+    if (my) {
+      socket.on("new message", handlerNewMessage);
+    }
+    return () => {
+      socket.off("get messages", handlerGetMessages);
+      socket.off("new message", handlerNewMessage);
+    };
+  }, [my, messages, other]);
   useEffect(() => {
     if (other) {
       const { token = "", refreshToken = "", id = "" } = getCookie();
       socket.emit("get messages", { token, refreshToken, id, other: other.id });
       socket.on("get messages", handlerGetMessages);
-      return () => {
-        socket.off("get messages", handlerGetMessages);
-      };
     }
+    return () => {
+      socket.off("get messages", handlerGetMessages);
+    };
   }, [other]);
-
+  useEffect(() => {
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUrlload(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  }, [file]);
   useEffect(() => {
     scroll_ref.current && scroll_ref.current.scrollIntoView();
   }, [messages]);
-
-  useEffect(() => {
-    if (my) {
-      socket.on("new message", handlerNewMessage);
-      return () => {
-        socket.off("new message", handlerNewMessage);
-      };
-    }
-  }, [my, messages]);
 
   const stylecontainer = active
     ? { width: "calc(100% - 775px)" }
@@ -249,12 +260,18 @@ function Chat(props) {
             </div>
           </div>
         )}
-        {messages.length > 10 && (
+        {quantity < messages.length / 10 ? (
           <div className="Chat__mostmessages">
-            <Icon name="ADD" size={30} color="black" pointer={true} />
+            <Icon
+              name="ADD"
+              size={30}
+              color="black"
+              pointer={true}
+              onClick={() => setQuantity(quantity + 1)}
+            />
           </div>
-        )}
-        {useList(messages, Message)}
+        ) : null}
+        {useList(messages.slice(quantity * -10), Message)}
         <div ref={scroll_ref}></div>
       </div>
       <div className="Chat__input">

@@ -5,17 +5,20 @@ const {
   USERBYEMAIL,
   SAVEUSER,
   UPDATEUSER,
-  VERIFYEMAIL,
   GETUSERS,
+  REMOVEUSER,
   GETMESSAGES,
   GETLATESTMESSAGE,
   SAVEMESSAGE,
-  REMOVEUSER,
   COUNTMESSAGESNOTVIEWED,
   CHECKALLMESSAGES,
   SETNEWPENDING,
   CLEARURLPENDING,
   ALLPENDINGS,
+  VERIFYEMAIL,
+  GETTOKENS,
+  UPDATETOKEN,
+  SAVETOKEN,
 } = require("./querys");
 const { defaultImages } = require("../helper/helper");
 
@@ -80,16 +83,24 @@ async function updateUser({
     return err;
   }
 }
-async function verifyEmail(id) {
+async function getUsers(id) {
   try {
-    await pool.query(VERIFYEMAIL, [true, id]);
+    const res = await pool.query(GETUSERS, [id]);
+    return res.rows;
   } catch (err) {
     return err;
   }
 }
-async function getUsers(id) {
+async function removeUser(id) {
   try {
-    const res = await pool.query(GETUSERS, [id]);
+    await pool.query(REMOVEUSER, [id]);
+  } catch (err) {
+    console.log(err);
+  }
+}
+async function getMessages(id, other) {
+  try {
+    const res = await pool.query(GETMESSAGES, [id, other]);
     return res.rows;
   } catch (err) {
     return err;
@@ -99,14 +110,6 @@ async function getLatestMessage(to, from) {
   try {
     const res = await pool.query(GETLATESTMESSAGE, [to, from]);
     return res.rows && res.rows.length === 1 ? res.rows[0] : null;
-  } catch (err) {
-    return err;
-  }
-}
-async function getMessages(id, other) {
-  try {
-    const res = await pool.query(GETMESSAGES, [id, other]);
-    return res.rows;
   } catch (err) {
     return err;
   }
@@ -121,13 +124,6 @@ async function saveMessage({ to, from, message, datetime, viewed, urlimage }) {
       viewed,
       urlimage,
     ]);
-  } catch (err) {
-    console.log(err);
-  }
-}
-async function removeUser(id) {
-  try {
-    await pool.query(REMOVEUSER, [id]);
   } catch (err) {
     console.log(err);
   }
@@ -169,21 +165,58 @@ async function allPendings(url) {
     console.log(err);
   }
 }
+async function verifyEmail(id) {
+  try {
+    await pool.query(VERIFYEMAIL, [true, id]);
+  } catch (err) {
+    return err;
+  }
+}
+async function getTokens() {
+  try {
+    const res = await pool.query(GETTOKENS);
+    const refreshTokens = {};
+    if (res && res.rows) {
+      res.rows.forEach((e) => {
+        refreshTokens[e.token] = e.id;
+      });
+    }
+    return refreshTokens;
+  } catch (err) {
+    return err;
+  }
+}
+async function saveToken(token, id) {
+  try {
+    const res = await pool.query(GETTOKENS);
+    if (res && res.rows) {
+      if (res.rows.findIndex((e) => e.id === id) !== -1) {
+        await pool.query(UPDATETOKEN, [token, id]);
+      } else {
+        await pool.query(SAVETOKEN, [token, id]);
+      }
+    }
+  } catch (err) {
+    return err;
+  }
+}
 
 module.exports = {
   userById,
   userByEmail,
   saveUser,
-  verifyEmail,
   updateUser,
   getUsers,
   removeUser,
   getMessages,
-  saveMessage,
   getLatestMessage,
+  saveMessage,
   countMessagesNotViewed,
   checkAllMessages,
   setNewPending,
   clearUrlPending,
   allPendings,
+  verifyEmail,
+  getTokens,
+  saveToken,
 };
