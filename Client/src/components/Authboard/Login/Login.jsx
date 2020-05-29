@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect, useRef } from "react";
 import Cookie from "js-cookie";
 import { Link } from "react-router-dom";
 import { Context } from "../../../context/Context";
-import Input from "../../Common/Input/Input";
+import Input from "../../Common/Input/";
 
 function Login(props) {
   const { message, setMessage } = props;

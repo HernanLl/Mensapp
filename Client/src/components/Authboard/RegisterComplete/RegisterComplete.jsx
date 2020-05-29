@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import { Context } from "../../../context/Context";
 import useWidget from "../../../HOC/useWidget";
 import { convertUrlProfile, getCookie } from "../../../helper/helper";
-import Input from "../../Common/Input/Input";
-import Textarea from "../../Common/Textarea/Textarea";
-import Icon from "../../Common/Icon/Icon";
+import Input from "../../Common/Input";
+import Textarea from "../../Common/Textarea";
+import Icon from "../../Common/Icon";
 
 function RegisterComplete(props) {
   const { setSelectedImage, images } = props;

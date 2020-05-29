@@ -1,8 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
-import Cookie from "js-cookie";
-import Input from "../../Common/Input/Input";
 import { Link } from "react-router-dom";
 import { Context } from "../../../context/Context";
+import Input from "../../Common/Input";
 
 function Register(props) {
   const { setMessage } = props;

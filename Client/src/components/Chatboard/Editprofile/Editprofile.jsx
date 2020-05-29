@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
 import "./styles.scss";
-import Input from "../../Common/Input/Input";
-import Icon from "../../Common/Icon/Icon";
-import Textarea from "../../Common/Textarea/Textarea";
-import useWidget from "../../../HOC/useWidget";
 import { convertUrlProfile, getCookie } from "../../../helper/helper";
 import { Context } from "../../../context/Context";
+import useWidget from "../../../HOC/useWidget";
+import Input from "../../Common/Input";
+import Icon from "../../Common/Icon";
+import Textarea from "../../Common/Textarea";
 
 function Editprofile(props) {
   const {

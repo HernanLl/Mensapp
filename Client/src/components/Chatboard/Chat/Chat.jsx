@@ -3,11 +3,11 @@ import PropTypes from "prop-types";
 import "./styles.scss";
 import { Context } from "../../../context/Context";
 import { newDate, getCookie } from "../../../helper/helper";
+import useList from "../../../Hooks/useList";
 
 //components
-import useList from "../../../Hooks/useList";
-import Message from "../../Common/Message/Message";
-import Icon from "../../Common/Icon/Icon";
+import Message from "../../Common/Message";
+import Icon from "../../Common/Icon";
 
 function Chat(props) {
   const { my, other, active, onNewMessage, onClickInfo } = props;

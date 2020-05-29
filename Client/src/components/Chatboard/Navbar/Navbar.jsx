@@ -1,8 +1,9 @@
 import React from "react";
 import "./styles.scss";
-import Icon from "../../Common/Icon/Icon";
-import Dropdown from "./Dropdown/Dropdown";
 import { convertUrlProfile } from "../../../helper/helper";
+import Dropdown from "./Dropdown";
+import Icon from "../../Common/Icon";
+
 export default function Navbar(props) {
   const { urlprofile, setEdit, openProfile } = props;
   return (

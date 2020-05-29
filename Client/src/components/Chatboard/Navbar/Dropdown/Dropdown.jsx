@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useContext } from "react";
 import Cookie from "js-cookie";
 import "./styles.scss";
 import { Context } from "../../../../context/Context";
-import Icon from "../../../Common/Icon/Icon";
+import Icon from "../../../Common/Icon";
 
 export default function Dropdown(props) {
   const { openProfile } = props;
