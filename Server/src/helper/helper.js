@@ -72,28 +72,12 @@ async function sendEmail(from, to, subject, link) {
       from,
       to,
       subject,
-      html:`
-      <style>
-      @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
-              .container{
-                  padding:1rem;
-                  font-family: 'Roboto',sans-serif;
-              }
-              .link{
-                  padding: 1rem 2rem;
-                  background-color: #33b5e5;
-                  color: white;
-                  border:none;
-                  border-radius: 3rem;
-                  margin: 0 1rem;
-                  cursor: pointer;
-                  text-decoration:none;
-              }
-            </style>
-          <div class="container" >
+      html: `
+          <div class="container" style="padding:1rem;font-family: sans-serif;" >
               <p>
-                  Bienvenido a la comunidad de Mensapp, para finalizar su registro debe <a href="${link}" class="link">Validar su cuenta</a>
-              </p>        
+                  Bienvenido a la comunidad de Mensapp, para finalizar su registro debe 
+              </p>
+              <a href="${link}" class="link" style="padding: 1rem 2rem;background-color: #33b5e5;color: white;border:none;border-radius: 3rem;margin: 0 1rem;cursor: pointer;text-decoration:none;">Validar su cuenta</a>
           </div>
       `,
     });

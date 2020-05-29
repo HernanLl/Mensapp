@@ -111,14 +111,14 @@ function Chatboard() {
   const handleChangeUser = ({ user }) => {
     if (user.id === other.id) {
       setOther(user);
-      setUsers(
-        users.map((_user) => {
-          if (_user.id === user.id) {
-            return { ..._user, ...user };
-          } else return user;
-        })
-      );
     }
+    setUsers(
+      users.map((_user) => {
+        if (_user.id === user.id) {
+          return { ..._user, ...user };
+        } else return _user;
+      })
+    );
   };
   //use effects
   useEffect(() => {

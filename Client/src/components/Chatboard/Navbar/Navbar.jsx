@@ -12,7 +12,7 @@ function Navbar(props) {
       <div className="Navbar__user">
         <img
           className="Navbar__userimage"
-          src={convertUrlProfile(urlprofile)}
+          src={convertUrlProfile(urlprofile, 75)}
           alt="user"
         />
       </div>
