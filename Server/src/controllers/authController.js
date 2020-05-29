@@ -6,13 +6,13 @@ const {
   sendEmail,
   getPublicId,
   verifyCredentials,
-  defaultImages,
 } = require("../helper/helper");
 const {
   userByEmail,
   saveUser,
   updateUser,
   saveToken,
+  defaultImages,
 } = require("../database/database");
 const cloduinary = require("cloudinary").v2;
 
@@ -37,6 +37,13 @@ function authController(socket, sockets) {
       socket.emit("login", {
         status: 403,
         message: "Su email aun no fue verificado",
+      });
+      return;
+    }
+    if(sockets.find(e => e.id === user.id)){
+      socket.emit("login", {
+        status: 400,
+        message: "Ya hay otro usuario utilizando esta cuenta",
       });
       return;
     }
@@ -75,13 +82,12 @@ function authController(socket, sockets) {
     id = await saveUser({ name, email, password: hash });
     const token = generateToken(id);
     //Send email
-    const link = "http://localhost:3000/verification/" + token;
+    const link = process.env.URL + "/verification/" + token;
     sendEmail(
       "hernanllull@gmail.com",
       email,
       "Bienvenido a MENSAPP",
-      "Este es un correo de verificacion de cuenta. Ingrese al siguiente link para activar su cuenta: " +
-        link
+      link
     );
     socket.emit("register", { status: 200 });
   });

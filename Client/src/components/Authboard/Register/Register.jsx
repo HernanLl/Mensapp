@@ -1,10 +1,11 @@
 import React, { useState, useContext, useEffect } from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { Context } from "../../../context/Context";
 import Input from "../../Common/Input";
 
 function Register(props) {
-  const { setMessage } = props;
+  const { setMessage, history } = props;
   //context
   const { socket } = useContext(Context);
   //form values and error
@@ -39,7 +40,7 @@ function Register(props) {
       setMessage(
         "Registrado exitosamente, por favor verifique su correo para continuar"
       );
-      props.history.push("/");
+      history.push("/");
     } else {
       setError(message);
     }
@@ -119,5 +120,10 @@ function Register(props) {
     </div>
   );
 }
+
+Register.propTypes = {
+  setMessage: PropTypes.func,
+  history: PropTypes.object,
+};
 
 export default Register;

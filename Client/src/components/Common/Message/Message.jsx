@@ -45,29 +45,29 @@ function Message(props) {
   styles.img = my ? { marginLeft: "auto" } : {};
   return (
     <div className="Message" style={styles.container}>
+      {activepreview && (
+        <div
+          className="Message__preview"
+          tabIndex="1"
+          ref={myref}
+          onKeyDown={(e) => {
+            if (e.keyCode === 27) setActivepreview(false);
+          }}
+        >
+          <div className="Preview__cancel">
+            <div
+              className="Preview__handlerClick"
+              onClick={() => setActivepreview(false)}
+            ></div>
+            X
+          </div>
+          <img alt="message" src={urlimage} />
+        </div>
+      )}
       <div className="Message__profile">
         <img alt="profile" src={urlprofile} />
       </div>
       <div className="Message__container">
-        {activepreview && (
-          <div
-            className="Message__preview"
-            tabIndex="1"
-            ref={myref}
-            onKeyDown={(e) => {
-              setActivepreview(false);
-            }}
-          >
-            <div className="Preview__cancel">
-              <div
-                className="Preview__handlerClick"
-                onClick={() => setActivepreview(false)}
-              ></div>
-              X
-            </div>
-            <img alt="message" src={urlimage} />
-          </div>
-        )}
         {urlimage && (
           <div
             className="Message__img"
@@ -93,6 +93,7 @@ Message.propTypes = {
   datetime: PropTypes.string,
   message: PropTypes.string,
   urlprofile: PropTypes.string,
+  urlimage: PropTypes.string,
 };
 
 export default Message;

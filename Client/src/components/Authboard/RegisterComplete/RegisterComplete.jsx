@@ -8,7 +8,7 @@ import Textarea from "../../Common/Textarea";
 import Icon from "../../Common/Icon";
 
 function RegisterComplete(props) {
-  const { setSelectedImage, images } = props;
+  const { setSelectedImage, images, history } = props;
   //context
   const { setAuthenticated, socket, setDialog } = useContext(Context);
   //form values
@@ -19,7 +19,7 @@ function RegisterComplete(props) {
 
   useEffect(() => {
     if (!getCookie()) {
-      props.history.push("/");
+      history.push("/");
       setDialog({
         type: "danger",
         title: "No autorizado",
@@ -44,7 +44,7 @@ function RegisterComplete(props) {
       state,
       location,
     });
-    props.history.push("/");
+    history.push("/");
     setAuthenticated(true);
   };
 
@@ -111,7 +111,6 @@ function RegisterComplete(props) {
         />
         <Textarea
           color="#ccc"
-          value=""
           width="100%"
           height="200px"
           value={state}
@@ -130,6 +129,7 @@ function RegisterComplete(props) {
 RegisterComplete.propTypes = {
   setSelectedImage: PropTypes.func,
   images: PropTypes.array,
+  history: PropTypes.object,
 };
 
 export default useWidget(RegisterComplete);

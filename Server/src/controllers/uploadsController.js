@@ -1,9 +1,8 @@
 const {
   getPublicId,
   verifyCredentials,
-  defaultImages,
 } = require("../helper/helper");
-const { updateUser, setNewPending } = require("../database/database");
+const { updateUser, setNewPending, defaultImages} = require("../database/database");
 const cloduinary = require("cloudinary").v2;
 
 function uploadsController(socket) {

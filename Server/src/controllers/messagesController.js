@@ -58,12 +58,15 @@ function messagesController(socket, sockets) {
       });
       const socket_other = sockets.find((e) => e.id === other);
       if (socket_other) {
+        console.log(socket_other.socket.connected);
         socket_other.socket.emit("new message", {
           from: id,
           message,
           datetime,
           urlimage,
         });
+      }else{
+        console.log('no se va a emitir mensaje');
       }
       clearUrlPending(urlimage);
     }

@@ -1,33 +1,33 @@
 @import "../../../general.scss";
 .Userslist {
-    position: relative;
-    width: 350px;
+  position: relative;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  background: $color2;
+  &__input__container {
+    .Icon {
+      position: absolute;
+      left: 20px;
+    }
+    width: 100%;
+    height: 50px;
+    padding: 0 1rem;
     display: flex;
-    flex-direction: column;
-    background: $color2;
-    &__input__container {
-        .Icon {
-            position: absolute;
-            left: 20px;
-        }
-        width: 100%;
-        height: 50px;
-        padding: 0 1rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    &__input {
-        width: 100%;
-        height: 35px;
-        border: none;
-        padding: 15px;
-        padding-left: 2rem;
-        background: white;
-    }
-    &__reference {
-        text-align: center;
-        margin-top: 1rem;
-        color: #aaa;
-    }
+    justify-content: center;
+    align-items: center;
+  }
+  &__input {
+    width: 100%;
+    height: 35px;
+    border: none;
+    padding: 15px;
+    padding-left: 2rem;
+    background: white;
+  }
+  &__reference {
+    text-align: center;
+    margin-top: 1rem;
+    color: #aaa;
+  }
 }

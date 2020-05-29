@@ -66,13 +66,36 @@ async function verifyCredentials(token, refreshToken, id, socket) {
   }
   return authorized;
 }
-async function sendEmail(from, to, subject, text) {
+async function sendEmail(from, to, subject, link) {
   try {
     await gmailTransport.sendMail({
       from,
       to,
       subject,
-      text,
+      html:`
+      <style>
+      @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+              .container{
+                  padding:1rem;
+                  font-family: 'Roboto',sans-serif;
+              }
+              .link{
+                  padding: 1rem 2rem;
+                  background-color: #33b5e5;
+                  color: white;
+                  border:none;
+                  border-radius: 3rem;
+                  margin: 0 1rem;
+                  cursor: pointer;
+                  text-decoration:none;
+              }
+            </style>
+          <div class="container" >
+              <p>
+                  Bienvenido a la comunidad de Mensapp, para finalizar su registro debe <a href="${link}" class="link">Validar su cuenta</a>
+              </p>        
+          </div>
+      `,
     });
   } catch (err) {
     console.log(err);
@@ -87,10 +110,6 @@ function getPublicId(url) {
   }
   return publicid;
 }
-const defaultImages = [
-  "https://res.cloudinary.com/dqiahaymp/image/upload/v1590419681/profiles/p6p3qwtz9mq135qy0eqe.jpg",
-  "https://res.cloudinary.com/dqiahaymp/image/upload/v1590419759/profiles/qsht38i88qnuthkutfhl.jpg",
-];
 
 module.exports = {
   generateHash,
@@ -101,5 +120,4 @@ module.exports = {
   sendEmail,
   getPublicId,
   verifyCredentials,
-  defaultImages,
 };

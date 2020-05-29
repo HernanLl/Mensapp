@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import "./styles.scss";
 
 function Loading(props) {
@@ -9,5 +10,9 @@ function Loading(props) {
     </div>
   ) : null;
 }
+
+Loading.propTypes = {
+  hidden: PropTypes.bool,
+};
 
 export default Loading;

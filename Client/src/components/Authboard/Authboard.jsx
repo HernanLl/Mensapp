@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState } from "react";
 import "./styles.scss";
 import file from "../../assets/Board.svg";
 import { Switch, Route, Redirect } from "react-router-dom";
@@ -7,7 +7,7 @@ import Login from "./Login";
 import Register from "./Register";
 import RegisterComplete from "./RegisterComplete";
 
-function Authboard(props) {
+function Authboard() {
   const [message, setMessage] = useState("");
   return (
     <div id="tuvieja" className="Authboard">

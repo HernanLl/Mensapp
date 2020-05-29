@@ -1,8 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import "./styles.scss";
 import Icon from "../Icon/Icon";
-import { useEffect } from "react";
 
 function Input(props) {
   const {
@@ -16,7 +15,6 @@ function Input(props) {
     placeholder,
     helper,
     textcolor,
-    autocomplete,
   } = props;
   const [focus, setFocus] = useState(false);
 
@@ -67,13 +65,14 @@ function Input(props) {
 }
 
 Input.propTypes = {
-  value: PropTypes.string,
-  onChange: PropTypes.func,
-  placeholder: PropTypes.string.isRequired,
   icon: PropTypes.string,
   color: PropTypes.string,
   type: PropTypes.string,
+  name: PropTypes.string,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
   onPressEnter: PropTypes.func,
+  placeholder: PropTypes.string,
   helper: PropTypes.string,
   textcolor: PropTypes.string,
 };

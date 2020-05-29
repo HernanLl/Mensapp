@@ -71,3 +71,17 @@ export function getCookie() {
     return null;
   }
 }
+export function removeCookie() {
+  Cookie.remove("Auth");
+}
+export function setCookie(token, refreshToken, id) {
+  Cookie.set(
+    "Auth",
+    {
+      token,
+      refreshToken,
+      id,
+    },
+    { expires: 14 }
+  );
+}

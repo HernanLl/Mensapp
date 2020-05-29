@@ -61,13 +61,15 @@ Userbox.propTypes = {
   id: PropTypes.number,
   urlprofile: PropTypes.string,
   name: PropTypes.string,
-  latestmessages: PropTypes.shape({
+  latestmessage: PropTypes.shape({
     message: PropTypes.string,
     connected: PropTypes.bool,
     countMessages: PropTypes.number,
     datetime: PropTypes.string,
   }),
   onClick: PropTypes.func,
+  connected: PropTypes.bool,
+  countmessages: PropTypes.number,
 };
 
 export default Userbox;

@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useState, createContext } from "react";
+import React, { useEffect, useState } from "react";
 import "babel-polyfill";
 import "./styles.scss";
 import { Context } from "./context/Context";
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
-import Cookie from "js-cookie";
 import io from "socket.io-client";
-import { getCookie } from "./helper/helper";
+import { getCookie, removeCookie, setCookie } from "./helper/helper";
 
 //react components
 import Dialog from "./components/Common/Dialog";
@@ -14,9 +13,9 @@ import Authboard from "./components/Authboard";
 import Chatboard from "./components/ChatBoard";
 import NotFound from "./components/NotFound";
 
-const socket = io("http://localhost:3000/", { rejectUnauthorized: false });
+const socket = io("", { rejectUnauthorized: false });
 
-function App(props) {
+function App() {
   const [authenticated, setAuthenticated] = useState();
   const [render, setRender] = useState(window.innerWidth >= 992);
   const [dialog, setDialog] = useState({ message: "Hola" });
@@ -33,8 +32,7 @@ function App(props) {
 
   const handlerError = ({ code, message }) => {
     if (code === 401 || code === 403 || code === 500) {
-      alert(code);
-      Cookie.remove("Auth");
+      removeCookie();
       setAuthenticated(false);
       setDialog({
         type: "danger",
@@ -59,15 +57,7 @@ function App(props) {
   };
   const handlerNewToken = ({ newtoken }) => {
     const { refreshToken, id } = getCookie();
-    Cookie.set(
-      "Auth",
-      {
-        token: newtoken,
-        refreshToken,
-        id,
-      },
-      { expires: 14 }
-    );
+    setCookie(newtoken, refreshToken, id);
   };
   const handlerresize = () => {
     setRender(window.innerWidth >= 992);

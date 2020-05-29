@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import PropTypes from "prop-types";
 import "./styles.scss";
 import Icon from "../../Common/Icon/Icon";
@@ -6,14 +6,14 @@ import { convertUrlProfile } from "../../../helper/helper";
 import Loading from "../../Common/Loading/Loading";
 
 function Profile(props) {
-  const { active, setActive } = props;
   const {
-    id = -1,
-    name = "",
-    location = "",
-    state = "",
-    urlprofile = "",
-    urlbackground = "",
+    name,
+    location,
+    state,
+    urlprofile,
+    urlbackground,
+    active,
+    setActive,
   } = props;
   const [profileloaded, setProfile] = useState(false);
   const [backgroundloaded, setBackground] = useState(false);
@@ -83,6 +83,8 @@ Profile.propTypes = {
   state: PropTypes.string,
   urlprofile: PropTypes.string,
   urlbackground: PropTypes.string,
+  active: PropTypes.bool,
+  setActive: PropTypes.func,
 };
 
 export default Profile;

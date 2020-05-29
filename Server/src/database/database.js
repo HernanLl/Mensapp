@@ -20,7 +20,11 @@ const {
   UPDATETOKEN,
   SAVETOKEN,
 } = require("./querys");
-const { defaultImages } = require("../helper/helper");
+
+const defaultImages = [
+  "https://res.cloudinary.com/dqiahaymp/image/upload/v1590419681/profiles/p6p3qwtz9mq135qy0eqe.jpg",
+  "https://res.cloudinary.com/dqiahaymp/image/upload/v1590419759/profiles/qsht38i88qnuthkutfhl.jpg",
+];
 
 async function userById(id) {
   try {
@@ -219,4 +223,5 @@ module.exports = {
   verifyEmail,
   getTokens,
   saveToken,
+  defaultImages
 };

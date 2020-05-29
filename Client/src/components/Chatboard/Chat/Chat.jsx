@@ -95,9 +95,7 @@ function Chat(props) {
           credentials: "include",
           body: formData,
         };
-        const { url } = await (
-          await fetch("http://localhost:3000/loadfile", options)
-        ).json();
+        const { url } = await (await fetch("/loadfile", options)).json();
         newmessage.urlimage = url;
         setFile(null);
       }
@@ -125,14 +123,12 @@ function Chat(props) {
           params_to_sign,
         }),
       };
-      const res = await (
-        await fetch("http://localhost:3000/generateSignature", options)
-      ).json();
+      const res = await (await fetch("/generateSignature", options)).json();
       cb(res);
     }
   };
   const openWidget = () => {
-    cloudinary.openUploadWidget(
+    window.cloudinary.openUploadWidget(
       {
         cloudName: "dqiahaymp",
         apiKey: "459277451195346",
@@ -176,15 +172,17 @@ function Chat(props) {
     setMessages(filteredmessages);
   };
   const handlerNewMessage = ({ from, message, datetime, urlimage }) => {
-    const newmessage = {
-      from,
-      message,
-      datetime,
-      urlprofile: from === my.id ? my.urlprofile : other.urlprofile,
-      to: my.id,
-      urlimage,
-    };
-    setMessages([...messages, newmessage]);
+    if (from === other.id) {
+      const newmessage = {
+        from,
+        message,
+        datetime,
+        urlprofile: from === my.id ? my.urlprofile : other.urlprofile,
+        to: my.id,
+        urlimage,
+      };
+      setMessages([...messages, newmessage]);
+    }
   };
   //useeffect to socket events
   useEffect(() => {
@@ -192,7 +190,6 @@ function Chat(props) {
       socket.on("new message", handlerNewMessage);
     }
     return () => {
-      socket.off("get messages", handlerGetMessages);
       socket.off("new message", handlerNewMessage);
     };
   }, [my, messages, other]);

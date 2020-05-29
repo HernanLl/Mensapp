@@ -1,10 +1,11 @@
 import React from "react";
+import PropTypes from "prop-types";
 import "./styles.scss";
 import { convertUrlProfile } from "../../../helper/helper";
 import Dropdown from "./Dropdown";
 import Icon from "../../Common/Icon";
 
-export default function Navbar(props) {
+function Navbar(props) {
   const { urlprofile, setEdit, openProfile } = props;
   return (
     <div className="Navbar">
@@ -35,3 +36,11 @@ export default function Navbar(props) {
     </div>
   );
 }
+
+Navbar.propTypes = {
+  urlprofile: PropTypes.string,
+  setEdit: PropTypes.func,
+  openProfile: PropTypes.func,
+};
+
+export default Navbar;

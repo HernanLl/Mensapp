@@ -17,12 +17,16 @@ function usersController(socket, sockets, timers) {
       });
       return;
     }
-
-    if (sockets.findIndex((e) => e.socket === socket) === -1) {
+    let index =  sockets.findIndex((e) => e.id === id);
+    if ( index === -1) {
+      console.info("Agregando socket " + socket.connected)
       sockets.push({ socket, id });
+    }else{
+      console.info("Actualizado socket " + socket.connected)
+      sockets[index] = {socket,id};
     }
     //clean the timeout of disconnect
-    const index = timers.findIndex((e) => e.id === id);
+    index = timers.findIndex((e) => e.id === id);
     if (index !== -1) {
       clearTimeout(timers[index].timer);
       timers.splice(index, 1);

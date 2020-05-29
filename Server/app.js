@@ -21,14 +21,19 @@ const {
 } = require("./src/database/database");
 
 //Server configuration
-app.set("port", process.env.PORT || 3000);
+app.set("port", process.env.PORT);
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors({ credentials: true, origin: "http://localhost:3030" }));
 app.use(express.static(path.join(__dirname, "dist")));
 
+if (!fs.existsSync('./uploads')){
+  fs.mkdirSync('uploads');
+}
+
 //Server routes
 app.get("/verification/:token", (req, res) => {
+  console.log('hi');
   const { token } = req.params;
   const id = decodedToken(token);
   if (id) {

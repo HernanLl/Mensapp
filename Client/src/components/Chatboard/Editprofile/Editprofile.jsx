@@ -120,6 +120,13 @@ function Editprofile(props) {
   );
 }
 
-Editprofile.propTypes = {};
+Editprofile.propTypes = {
+  active: PropTypes.bool,
+  setActive: PropTypes.func,
+  images: PropTypes.array,
+  setImages: PropTypes.func,
+  setSelectedImage: PropTypes.func,
+  data: PropTypes.object,
+};
 
 export default useWidget(Editprofile);

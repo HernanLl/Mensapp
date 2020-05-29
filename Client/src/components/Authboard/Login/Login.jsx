@@ -1,11 +1,12 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
-import Cookie from "js-cookie";
+import React, { useState, useContext, useEffect } from "react";
+import { PropTypes } from "prop-types";
 import { Link } from "react-router-dom";
 import { Context } from "../../../context/Context";
 import Input from "../../Common/Input/";
+import { setCookie } from "../../../helper/helper";
 
 function Login(props) {
-  const { message, setMessage } = props;
+  const { message } = props;
   //context
   const { setAuthenticated, socket } = useContext(Context);
   //form values and error
@@ -20,7 +21,7 @@ function Login(props) {
 
   const handlerLogin = ({ status, message, token, refreshToken, id }) => {
     if (status === 200) {
-      Cookie.set("Auth", { token, refreshToken, id }, { expires: 14 });
+      setCookie(token, refreshToken, id);
       setAuthenticated(true);
     } else {
       setError(message);
@@ -86,5 +87,9 @@ function Login(props) {
     </div>
   );
 }
+
+Login.propTypes = {
+  message: PropTypes.string,
+};
 
 export default Login;

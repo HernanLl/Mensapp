@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Context } from "../context/Context";
-import Cookie from "js-cookie";
 import { getCookie } from "../helper/helper";
 
 export default function useWidget(WrappedComponent) {
-  return (props) => {
+  return function widget(props) {
     const defaultImages = [
       "https://res.cloudinary.com/dqiahaymp/image/upload/v1590419681/profiles/p6p3qwtz9mq135qy0eqe.jpg",
       "https://res.cloudinary.com/dqiahaymp/image/upload/v1590419759/profiles/qsht38i88qnuthkutfhl.jpg",
@@ -15,7 +14,7 @@ export default function useWidget(WrappedComponent) {
     const { socket } = useContext(Context);
 
     const generateSignature = (cb, params_to_sign) => {
-      fetch("http://localhost:3000/generateSignature", {
+      fetch("/generateSignature", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -29,7 +28,7 @@ export default function useWidget(WrappedComponent) {
 
     useEffect(() => {
       if (selectedImage !== -1) {
-        cloudinary.openUploadWidget(
+        window.cloudinary.openUploadWidget(
           {
             cloudName: "dqiahaymp",
             apiKey: "459277451195346",
@@ -40,9 +39,7 @@ export default function useWidget(WrappedComponent) {
           },
           (error, result) => {
             if (!error && result && result.event === "success") {
-              const { token, refreshToken, id } = JSON.parse(
-                Cookie.get("Auth")
-              );
+              const { token, refreshToken, id } = getCookie();
               //update url in database and remove old image
               socket.emit("update and remove", {
                 token,

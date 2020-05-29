@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import Cookie from "js-cookie";
+import PropTypes from "prop-types";
 import "./styles.scss";
 import { Context } from "../../../../context/Context";
 import Icon from "../../../Common/Icon";
+import { removeCookie } from "../../../../helper/helper";
 
-export default function Dropdown(props) {
+function Dropdown(props) {
   const { openProfile } = props;
   const [active, setActive] = useState(false);
   const myref = useRef(null);
@@ -16,7 +17,7 @@ export default function Dropdown(props) {
   }, [active]);
 
   const onSignout = () => {
-    Cookie.remove("Auth");
+    removeCookie();
     setAuthenticated(false);
   };
 
@@ -59,3 +60,9 @@ export default function Dropdown(props) {
     </div>
   );
 }
+
+Dropdown.propTypes = {
+  openProfile: PropTypes.func,
+};
+
+export default Dropdown;

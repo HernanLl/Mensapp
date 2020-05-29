@@ -4,7 +4,7 @@ import { Context } from "../../context/Context";
 import { getCookie } from "../../helper/helper";
 
 //components
-import Navbar from "./Navbar/Navbar";
+import Navbar from "./Navbar";
 import Chat from "./Chat";
 import Profile from "./Profile";
 import Userslist from "./Userslist";
