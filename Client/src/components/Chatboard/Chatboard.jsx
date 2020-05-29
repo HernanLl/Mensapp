@@ -5,10 +5,10 @@ import { getCookie } from "../../helper/helper";
 
 //components
 import Navbar from "./Navbar/Navbar";
-import Chat from "./Chat/Chat";
-import Profile from "./Profile/Profile";
-import Userslist from "./Userslist/Userslist";
-import Editprofile from "./Editprofile/Editprofile";
+import Chat from "./Chat";
+import Profile from "./Profile";
+import Userslist from "./Userslist";
+import Editprofile from "./Editprofile";
 
 function Chatboard() {
   const { socket } = useContext(Context);
