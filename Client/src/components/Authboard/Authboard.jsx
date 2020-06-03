@@ -6,6 +6,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
 import RegisterComplete from "./RegisterComplete";
+import Forgot from "./Forgot";
 
 function Authboard() {
   const [message, setMessage] = useState("");
@@ -29,6 +30,7 @@ function Authboard() {
             exact
           />
           <Route path="/signup/finish" component={RegisterComplete} exact />
+          <Route path="/forgot" component={Forgot} exact />
           <Route path="*" render={() => <Redirect to="/" />} />
         </Switch>
       </div>

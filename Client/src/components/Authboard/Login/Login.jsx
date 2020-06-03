@@ -73,7 +73,7 @@ function Login(props) {
           placeholder="Contraseña"
           autocomplete="new-password"
         />
-        <a className="Form__link Form__forgot" href="#">
+        <a className="Form__link Form__forgot" href="/#/forgot">
           ¿Olvidaste la contraseña?
         </a>
         <button className="Form__button" onClick={onLogin}>

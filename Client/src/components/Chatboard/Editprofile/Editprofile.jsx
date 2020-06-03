@@ -116,6 +116,45 @@ function Editprofile(props) {
           Finalizar edicion
         </button>
       </div>
+      <form className="Form">
+        <p className="font-2 m-1">Cambiar contraseña</p>
+        <Input
+          icon="KEY"
+          color="#ccc"
+          name="password-login"
+          type="password"
+          value={""}
+          onChange={(value) => {}}
+          onPressEnter={() => {}}
+          placeholder="Contraseña actual"
+          autocomplete="new-password"
+        />
+        <Input
+          icon="KEY"
+          color="#ccc"
+          name="password-login"
+          type="password"
+          value={""}
+          onChange={(value) => {}}
+          onPressEnter={() => {}}
+          placeholder="Nueva Contraseña"
+          autocomplete="new-password"
+        />
+        <Input
+          icon="KEY"
+          color="#ccc"
+          name="password-login"
+          type="password"
+          value={""}
+          onChange={(value) => {}}
+          onPressEnter={() => {}}
+          placeholder="Repetir contraseña"
+          autocomplete="new-password"
+        />
+        <button className="Form__button" onClick={() => {}}>
+          Cambiar contraseña
+        </button>
+      </form>
     </div>
   );
 }

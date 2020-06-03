@@ -47,11 +47,11 @@ function Dropdown(props) {
         ref={myref}
         style={style}
       >
-        <div className="Dropdown__item" onClick={onSignout}>
-          <p>Cerrar sesión</p>
-        </div>
         <div className="Dropdown__item" onClick={openProfile}>
           <p>Abrir perfil</p>
+        </div>
+        <div className="Dropdown__item" onClick={onSignout}>
+          <p>Cerrar sesión</p>
         </div>
         <div className="Dropdown__item" onClick={() => {}}>
           <p>Borrar cuenta</p>
