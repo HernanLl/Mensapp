@@ -43,6 +43,7 @@ function Message(props) {
     ? { ...styles.message, padding: "16px" }
     : { ...styles.message, padding: "0" };
   styles.img = my ? { marginLeft: "auto" } : {};
+
   return (
     <div className="Message" style={styles.container}>
       {activepreview && (
@@ -65,7 +66,7 @@ function Message(props) {
         </div>
       )}
       <div className="Message__profile">
-        <img alt="profile" src={urlprofile} />
+        <img alt="profile" src={convertUrlProfile(urlprofile, 50, true)} />
       </div>
       <div className="Message__container">
         {urlimage && (

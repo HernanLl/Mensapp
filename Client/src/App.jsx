@@ -13,7 +13,10 @@ import Authboard from "./components/Authboard";
 import Chatboard from "./components/ChatBoard";
 import NotFound from "./components/NotFound";
 
-const socket = io("", { rejectUnauthorized: false });
+const socket = io(
+  process.env.NODE_ENV === "development" ? "http://localhost:3000" : "/",
+  { rejectUnauthorized: false }
+);
 
 function App() {
   const [authenticated, setAuthenticated] = useState();
@@ -37,16 +40,6 @@ function App() {
       setDialog({
         type: "danger",
         title: "No autorizado",
-        description: message,
-        display: true,
-        onClose: () => {
-          setDialog({});
-        },
-      });
-    } else if (code === 400) {
-      setDialog({
-        type: "info",
-        title: "Datos invalidos",
         description: message,
         display: true,
         onClose: () => {

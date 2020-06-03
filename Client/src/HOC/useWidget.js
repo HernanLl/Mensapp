@@ -14,14 +14,19 @@ export default function useWidget(WrappedComponent) {
     const { socket } = useContext(Context);
 
     const generateSignature = (cb, params_to_sign) => {
-      fetch("/generateSignature", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ params_to_sign }),
-      })
+      fetch(
+        process.env.NODE_ENV === "development"
+          ? "http://localhost:3000/generateSignature"
+          : "/generateSignature",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ params_to_sign }),
+        }
+      )
         .then((res) => res.json())
         .then((res) => cb(res));
     };

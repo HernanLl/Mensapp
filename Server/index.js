@@ -17,21 +17,19 @@ io.on("connection", function (socket) {
   uploadsController(socket, sockets);
 
   socket.on("disconnect", () => {
-    const index = sockets.findIndex((e) => e.socket === socket);
-    const timer = setTimeout(() => {
-      if (index !== -1) {
+    const index = sockets.findIndex((e) => e.socket.id === socket.id);
+    if (index !== -1) {
+      console.log("Se encontrol el socket de: " + sockets[index].id);
+      const timer = setTimeout(() => {
         const id = sockets[index].id;
         sockets.splice(index, 1);
         io.emit("change user connection", {
           id,
           connection: false,
         });
-      }
-    }, 1000 * 60 * 10);
-    if (index !== -1) {
+      }, 1000 * 60 * 3);
       timers.push({ id: sockets[index].id, timer });
     }
-
     console.log("disconnect");
   });
 });

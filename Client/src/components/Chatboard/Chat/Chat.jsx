@@ -95,7 +95,14 @@ function Chat(props) {
           credentials: "include",
           body: formData,
         };
-        const { url } = await (await fetch("/loadfile", options)).json();
+        const { url } = await (
+          await fetch(
+            process.env.NODE_ENV === "development"
+              ? "http://localhost:3000/loadfile"
+              : "/loadfile",
+            options
+          )
+        ).json();
         newmessage.urlimage = url;
         setFile(null);
       }
@@ -123,7 +130,14 @@ function Chat(props) {
           params_to_sign,
         }),
       };
-      const res = await (await fetch("/generateSignature", options)).json();
+      const res = await (
+        await fetch(
+          process.env.NODE_ENV === "development"
+            ? "http://localhost:3000/generateSignature"
+            : "/generateSignature",
+          options
+        )
+      ).json();
       cb(res);
     }
   };
@@ -202,7 +216,7 @@ function Chat(props) {
     return () => {
       socket.off("get messages", handlerGetMessages);
     };
-  }, [other]);
+  }, [other, my]);
   useEffect(() => {
     if (file) {
       const reader = new FileReader();

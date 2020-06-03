@@ -17,13 +17,12 @@ function usersController(socket, sockets, timers) {
       });
       return;
     }
-    let index =  sockets.findIndex((e) => e.id === id);
-    if ( index === -1) {
-      console.info("Agregando socket " + socket.connected)
+    let index = sockets.findIndex((e) => e.id === id);
+    if (index === -1) {
       sockets.push({ socket, id });
-    }else{
-      console.info("Actualizado socket " + socket.connected)
-      sockets[index] = {socket,id};
+    } else {
+      console.info("Actualizado socket " + socket.connected);
+      sockets[index] = { socket, id };
     }
     //clean the timeout of disconnect
     index = timers.findIndex((e) => e.id === id);
@@ -35,7 +34,7 @@ function usersController(socket, sockets, timers) {
     const user = await userById(id);
     if (!user) {
       socket.emit("error server", {
-        code: 400,
+        code: 401,
         message: "No existe el usuario",
       });
     } else {

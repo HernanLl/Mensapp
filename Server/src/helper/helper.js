@@ -74,10 +74,10 @@ async function sendEmail(from, to, subject, link) {
       subject,
       html: `
           <div class="container" style="padding:1rem;font-family: sans-serif;" >
-              <p>
+              <p style="margin-bottom:2rem">
                   Bienvenido a la comunidad de Mensapp, para finalizar su registro debe 
               </p>
-              <a href="${link}" class="link" style="padding: 1rem 2rem;background-color: #33b5e5;color: white;border:none;border-radius: 3rem;margin: 0 1rem;cursor: pointer;text-decoration:none;">Validar su cuenta</a>
+              <a href="${link}" class="link" style="padding: 1rem 2rem;background-color: #33b5e5;color: white;border:none;border-radius: 3rem;cursor: pointer;text-decoration:none;">Validar su cuenta</a>
           </div>
       `,
     });
