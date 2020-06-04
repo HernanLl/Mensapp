@@ -68,7 +68,7 @@ export function getCookie() {
   try {
     return JSON.parse(Cookie.get("Auth") || {});
   } catch (err) {
-    return {};
+    return null;
   }
 }
 export function removeCookie() {
