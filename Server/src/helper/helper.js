@@ -35,7 +35,8 @@ function generateRefreshToken(id) {
     expiresIn: "14 days",
   });
 }
-async function verifyCredentials(token, refreshToken, id, socket) {
+async function verifyCredentials(token, refreshToken, socket) {
+  const id = decodedToken(token);
   const refreshTokens = await getTokens();
   let authorized = false;
   const userid = verifyToken(token);
@@ -58,7 +59,6 @@ async function verifyCredentials(token, refreshToken, id, socket) {
       authorized = true;
     }
   } else {
-    console.log("no hay un refresh token o es invalido");
     socket.emit("error server", {
       code: 401,
       message: "No autorizado, credenciales invalidas",
@@ -85,6 +85,25 @@ async function sendEmail(from, to, subject, link) {
     console.log(err);
   }
 }
+async function sendEmailPassword(from, to, subject, link) {
+  try {
+    await gmailTransport.sendMail({
+      from,
+      to,
+      subject,
+      html: `
+          <div class="container" style="padding:1rem;font-family: sans-serif;" >
+              <p style="margin-bottom:2rem">
+                  Para cambiar su contraseña 
+              </p>
+              <a href="${link}" class="link" style="padding: 1rem 2rem;background-color: #33b5e5;color: white;border:none;border-radius: 3rem;cursor: pointer;text-decoration:none;">Ingrese aqui</a>
+          </div>
+      `,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}
 function getPublicId(url) {
   let publicid = "";
   if (url) {
@@ -102,6 +121,7 @@ module.exports = {
   decodedToken,
   generateRefreshToken,
   sendEmail,
+  sendEmailPassword,
   getPublicId,
   verifyCredentials,
 };

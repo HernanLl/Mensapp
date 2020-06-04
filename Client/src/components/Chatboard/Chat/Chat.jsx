@@ -106,11 +106,8 @@ function Chat(props) {
         newmessage.urlimage = url;
         setFile(null);
       }
-      const { token = "", refreshToken = "", id = -1 } = getCookie();
       socket.emit("new message", {
-        token,
-        refreshToken,
-        id,
+        cookie: getCookie(),
         newmessage,
         other: other.id,
       });
@@ -156,12 +153,9 @@ function Chat(props) {
           setUrlload(result.info.url);
           setLoadfile(true);
           input_ref.current.focus();
-          const { token, refreshToken, id } = getCookie();
           socket.emit("new pending", {
             url: result.info.url,
-            token,
-            refreshToken,
-            id,
+            cookie: getCookie(),
           });
         }
       }
@@ -209,8 +203,7 @@ function Chat(props) {
   }, [my, messages, other]);
   useEffect(() => {
     if (other) {
-      const { token = "", refreshToken = "", id = "" } = getCookie();
-      socket.emit("get messages", { token, refreshToken, id, other: other.id });
+      socket.emit("get messages", { cookie: getCookie(), other: other.id });
       socket.on("get messages", handlerGetMessages);
     }
     return () => {

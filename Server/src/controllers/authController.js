@@ -4,14 +4,18 @@ const {
   generateToken,
   generateRefreshToken,
   sendEmail,
+  sendEmailPassword,
   getPublicId,
   verifyCredentials,
+  decodedToken,
 } = require("../helper/helper");
 const {
+  userById,
   userByEmail,
   saveUser,
   updateUser,
   saveToken,
+  deleteToken,
   defaultImages,
 } = require("../database/database");
 const cloduinary = require("cloudinary").v2;
@@ -40,7 +44,7 @@ function authController(socket, sockets) {
       });
       return;
     }
-    if(sockets.find(e => e.id === user.id)){
+    if (sockets.find((e) => e.id === user.id)) {
       socket.emit("login", {
         status: 400,
         message: "Ya hay otro usuario utilizando esta cuenta",
@@ -58,14 +62,17 @@ function authController(socket, sockets) {
       id: user.id,
       connection: true,
     });
-    socket.emit("login", { status: 200, token, refreshToken, id: user.id });
+    socket.emit("login", {
+      status: 200,
+      cookie: { token, refreshToken, id: user.id },
+    });
   });
 
   socket.on("register", async function ({ name, email, password }) {
     if (!name || !email || !password) {
       socket.emit("register", {
         status: 400,
-        message: "Campos ingresados invalidos",
+        message: "Los campos no pueden estar vacios",
       });
       return;
     }
@@ -77,34 +84,31 @@ function authController(socket, sockets) {
       });
       return;
     }
-
     const hash = generateHash(password);
     id = await saveUser({ name, email, password: hash });
     const token = generateToken(id);
     //Send email
     const link = process.env.URL + "/verification/" + token;
-    sendEmail(
-      "hernanllull@gmail.com",
-      email,
-      "Bienvenido a MENSAPP",
-      link
-    );
-    socket.emit("register", { status: 200 });
+    sendEmail("hernanllull@gmail.com", email, "Bienvenido a MENSAPP", link);
+    socket.emit("register", {
+      status: 200,
+      message:
+        "Registrado exitosamente, ingrese a su email para verificar su cuenta",
+    });
   });
 
   socket.on("register complete", async function ({
-    token,
-    refreshToken,
-    id,
     urlprofile,
     urlbackground,
     state,
     location,
+    cookie,
   }) {
-    if (await !verifyCredentials(token, refreshToken, id, socket)) {
+    const { token, refreshToken } = cookie;
+    if (await !verifyCredentials(token, refreshToken, socket)) {
       socket.emit("error server", {
         code: 401,
-        message: "Access token or refresh token invalid",
+        message: "No autorizado, credenciales invalidas",
       });
       return;
     }
@@ -118,17 +122,17 @@ function authController(socket, sockets) {
   });
 
   socket.on("update and remove", async function ({
-    token,
-    refreshToken,
-    id,
     url,
     newurl,
     selectedImage,
+    cookie,
   }) {
-    if (await !verifyCredentials(token, refreshToken, id, socket)) {
+    const { token, refreshToken } = cookie;
+    const id = decodedToken(token);
+    if (await !verifyCredentials(token, refreshToken, socket)) {
       socket.emit("error server", {
         code: 401,
-        message: "Access token or refresh token invalid",
+        message: "No autorizado, credenciales invalidas",
       });
       return;
     }
@@ -146,9 +150,89 @@ function authController(socket, sockets) {
     socket.broadcast.emit("change user connection", { id, connection: true });
   });
 
-  socket.on("isAuthenticated", async function ({ id, token, refreshToken }) {
+  socket.on("isAuthenticated", async function ({ cookie }) {
+    const { token, refreshToken } = cookie;
+    const id = decodedToken(token);
     if (verifyCredentials(token, refreshToken, id, socket)) {
       socket.emit("isAuthenticated", {});
+    }
+  });
+
+  socket.on("forgot password email", async function ({ email }) {
+    const user = await userByEmail(email);
+    if (user) {
+      const token = generateToken(user.id);
+      const link = process.env.URL + "/forgotpassword/" + token;
+      await sendEmailPassword(
+        "hernanllull@gmail.com",
+        email,
+        "Recuperar contraseña",
+        link
+      );
+      socket.emit("forgot password email", {
+        status: 200,
+        message: "Email enviado con exito, ingrese a su email para continuar",
+      });
+    } else {
+      socket.emit("forgot password email", {
+        status: 400,
+        message: "No hay ningún usuario registrado con ese email",
+      });
+    }
+  });
+  socket.on("forgot password", async function ({ password, cookie }) {
+    const { token, refreshToken } = cookie;
+    const id = decodedToken(token);
+    if (await !verifyCredentials(token, refreshToken, socket)) {
+      socket.emit("error server", {
+        code: 401,
+        message: "No autorizado, credenciales invalidas",
+      });
+      return;
+    }
+    const hash = generateHash(password);
+    await updateUser({ id, password: hash });
+    socket.emit("forgot password", {
+      status: 200,
+      message: "Contraseña actualizada con exito, ingrese a su cuenta",
+    });
+  });
+  socket.on("forgot password with old", async function ({
+    old,
+    password,
+    cookie,
+  }) {
+    const { token, refreshToken } = cookie;
+    const id = decodedToken(token);
+    if (await !verifyCredentials(token, refreshToken, socket)) {
+      socket.emit("error server", {
+        code: 401,
+        message: "No autorizado, credenciales invalidas",
+      });
+      return;
+    }
+    const user = await userById(id);
+    if (compareHash(old, user.password)) {
+      const hash = generateHash(password);
+      await updateUser({ id, password: hash });
+      socket.emit("forgot password with old", {
+        status: 200,
+        message: "Contraseña actualizada con exito",
+      });
+    } else {
+      socket.emit("forgot password with old", {
+        status: 400,
+        message: "Contraseña anterior incorrecta",
+      });
+    }
+  });
+  socket.on("logout", async function ({ cookie }) {
+    const { token } = cookie;
+    const id = decodedToken(token);
+    await deleteToken(id);
+    const index = sockets.findIndex((e) => e.id === id);
+    if (index !== -1) {
+      sockets.splice(index, 1);
     }
   });
 }

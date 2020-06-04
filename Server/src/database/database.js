@@ -26,6 +26,7 @@ const {
   GETTOKENS,
   UPDATETOKEN,
   SAVETOKEN,
+  DELETETOKEN,
 } = require("./querys");
 
 const defaultImages = [
@@ -91,6 +92,7 @@ async function updateUser({
       id,
     ]);
   } catch (err) {
+    console.log(err);
     return err;
   }
 }
@@ -212,6 +214,14 @@ async function saveToken(token, id) {
   }
 }
 
+async function deleteToken(id) {
+  try {
+    pool.query(DELETETOKEN, [id]);
+  } catch (err) {
+    return err;
+  }
+}
+
 module.exports = {
   userById,
   userByEmail,
@@ -230,5 +240,6 @@ module.exports = {
   verifyEmail,
   getTokens,
   saveToken,
+  deleteToken,
   defaultImages,
 };

@@ -81,3 +81,9 @@ $info: rgba(51, 181, 229, 1);
   min-height: 100%;
   object-fit: cover;
 }
+
+button:disabled,
+button[disabled] {
+  background: #ccc !important;
+  cursor: initial !important;
+}

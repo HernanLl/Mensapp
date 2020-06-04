@@ -1,4 +1,4 @@
-const { verifyCredentials } = require("../helper/helper");
+const { verifyCredentials, decodedToken } = require("../helper/helper");
 const {
   getMessages,
   saveMessage,
@@ -8,33 +8,27 @@ const {
 } = require("../database/database");
 
 function messagesController(socket, sockets) {
-  socket.on("get messages", async function ({
-    token,
-    refreshToken,
-    id,
-    other,
-  }) {
-    if (await !verifyCredentials(token, refreshToken, id, socket)) {
+  socket.on("get messages", async function ({ other, cookie }) {
+    const { token, refreshToken } = cookie;
+    const id = decodedToken(token);
+    if (await !verifyCredentials(token, refreshToken, socket)) {
       socket.emit("error server", {
         code: 401,
-        message: "Access token or refresh token invalid",
+        message: "No autorizado, credenciales invalidas",
       });
       return;
     }
     const messages = await getMessages(id, other);
     socket.emit("get messages", { messages });
   });
-  socket.on("new message", async function ({
-    token,
-    refreshToken,
-    id,
-    newmessage,
-    other,
-  }) {
-    if (await !verifyCredentials(token, refreshToken, id, socket)) {
+
+  socket.on("new message", async function ({ cookie, newmessage, other }) {
+    const { token, refreshToken } = cookie;
+    const id = decodedToken(token);
+    if (await !verifyCredentials(token, refreshToken, socket)) {
       socket.emit("error server", {
         code: 401,
-        message: "Access token or refresh token invalid",
+        message: "No autorizado, credenciales invalidas",
       });
       return;
     }
@@ -58,29 +52,24 @@ function messagesController(socket, sockets) {
       });
       const socket_other = sockets.find((e) => e.id === other);
       if (socket_other) {
-        console.log(socket_other.socket.connected);
         socket_other.socket.emit("new message", {
           from: id,
           message,
           datetime,
           urlimage,
         });
-      }else{
-        console.log('no se va a emitir mensaje');
       }
       clearUrlPending(urlimage);
     }
   });
-  socket.on("check all messages", async function ({
-    token,
-    refreshToken,
-    id,
-    other,
-  }) {
-    if (await !verifyCredentials(token, refreshToken, id, socket)) {
+
+  socket.on("check all messages", async function ({ other, cookie }) {
+    const { token, refreshToken } = cookie;
+    const id = decodedToken(token);
+    if (await !verifyCredentials(token, refreshToken, socket)) {
       socket.emit("error server", {
         code: 401,
-        message: "Access token or refresh token invalid",
+        message: "No autorizado, credenciales invalidas",
       });
       return;
     }

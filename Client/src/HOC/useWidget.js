@@ -44,12 +44,9 @@ export default function useWidget(WrappedComponent) {
           },
           (error, result) => {
             if (!error && result && result.event === "success") {
-              const { token, refreshToken, id } = getCookie();
               //update url in database and remove old image
               socket.emit("update and remove", {
-                token,
-                refreshToken,
-                id,
+                cookie: getCookie(),
                 url: images[selectedImage],
                 newurl: result.info.url,
                 selectedImage,

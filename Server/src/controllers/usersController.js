@@ -9,11 +9,13 @@ const {
 } = require("../database/database");
 
 function usersController(socket, sockets, timers) {
-  socket.on("user info", async function ({ token, refreshToken, id }) {
-    if (await !verifyCredentials(token, refreshToken, id, socket)) {
+  socket.on("user info", async function ({ cookie }) {
+    const { token, refreshToken } = cookie;
+    const id = decodedToken(token);
+    if (await !verifyCredentials(token, refreshToken, socket)) {
       socket.emit("error server", {
         code: 401,
-        message: "Access token or refresh token invalid",
+        message: "No autorizado, credenciales invalidas",
       });
       return;
     }
@@ -57,19 +59,19 @@ function usersController(socket, sockets, timers) {
   });
 
   socket.on("edit user", async function ({
-    token,
-    refreshToken,
-    id,
+    cookie,
     name,
     location,
     state,
     urlprofile,
     urlbackground,
   }) {
-    if (await !verifyCredentials(token, refreshToken, id, socket)) {
+    const { token, refreshToken } = cookie;
+    const id = decodedToken(token);
+    if (await !verifyCredentials(token, refreshToken, socket)) {
       socket.emit("error server", {
         code: 401,
-        message: "Access token or refresh token invalid",
+        message: "No autorizado, credenciales invalidas",
       });
       return;
     }
@@ -105,11 +107,13 @@ function usersController(socket, sockets, timers) {
     });
   });
 
-  socket.on("get users", async function ({ token, refreshToken, id }) {
-    if (await !verifyCredentials(token, refreshToken, id, socket)) {
+  socket.on("get users", async function ({ cookie }) {
+    const { token, refreshToken } = cookie;
+    const id = decodedToken(token);
+    if (await !verifyCredentials(token, refreshToken, socket)) {
       socket.emit("error server", {
         code: 401,
-        message: "Access token or refresh token invalid",
+        message: "No autorizado, credenciales invalidas",
       });
       return;
     }
@@ -146,7 +150,7 @@ function usersController(socket, sockets, timers) {
     });
     socket.emit("get users", { users });
   });
-  //TODO - manejar las cookies como cookie y no por partes
+
   //TODO - manejar borrado de usuarios y emision de evento broadcast
   socket.on("remove user", async function ({ token }) {
     const id = decodedToken(token);

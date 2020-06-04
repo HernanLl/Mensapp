@@ -27,13 +27,12 @@ app.use(cookieParser());
 app.use(cors({ credentials: true, origin: "http://localhost:3030" }));
 app.use(express.static(path.join(__dirname, "dist")));
 
-if (!fs.existsSync('./uploads')){
-  fs.mkdirSync('uploads');
+if (!fs.existsSync("./uploads")) {
+  fs.mkdirSync("uploads");
 }
 
 //Server routes
 app.get("/verification/:token", (req, res) => {
-  console.log('hi');
   const { token } = req.params;
   const id = decodedToken(token);
   if (id) {
@@ -44,7 +43,21 @@ app.get("/verification/:token", (req, res) => {
     res.cookie("Auth", JSON.stringify({ id, token, refreshToken }));
     res.redirect("/#/signup/finish");
   } else {
-    res.json({ status: 404, message: "Not found" });
+    res.status(404).end();
+  }
+});
+app.get("/forgotpassword/:token", (req, res) => {
+  const { token } = req.params;
+  const id = decodedToken(token);
+  if (id) {
+    verifyEmail(id);
+    //generate tokens
+    const refreshToken = generateRefreshToken(id);
+    saveToken(refreshToken, id);
+    res.cookie("Auth", JSON.stringify({ id, token, refreshToken }));
+    res.redirect("/#/forgot");
+  } else {
+    res.status(404).end();
   }
 });
 app.post("/generateSignature", (req, res) => {
@@ -71,20 +84,20 @@ app.post("/loadfile", upload.single("loadfile"), (req, res) => {
         { folder: "messages" },
         (err, result) => {
           if (err) {
-            console.log(err);
             res.status(500).json({
               message:
                 "Ocurrio un error con el servidor de imagenes, intentelo mas tarde",
             });
             res.end();
           } else {
-            res.status(200).json({ url: result.url });
+            res.status(200).json({ status: 200, url: result.url });
           }
           fs.unlinkSync(_path);
         }
       );
     } else {
       fs.unlinkSync(_path);
+      res.end();
     }
   } else {
     fs.unlinkSync(_path);

@@ -69,7 +69,7 @@ Userbox.propTypes = {
   }),
   onClick: PropTypes.func,
   connected: PropTypes.bool,
-  countmessages: PropTypes.number,
+  countmessages: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 };
 
 export default Userbox;

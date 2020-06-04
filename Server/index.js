@@ -19,7 +19,6 @@ io.on("connection", function (socket) {
   socket.on("disconnect", () => {
     const index = sockets.findIndex((e) => e.socket.id === socket.id);
     if (index !== -1) {
-      console.log("Se encontrol el socket de: " + sockets[index].id);
       const timer = setTimeout(() => {
         const id = sockets[index].id;
         sockets.splice(index, 1);

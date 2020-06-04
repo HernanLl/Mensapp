@@ -73,11 +73,8 @@ function Chatboard() {
   };
   const handlerCheckAllMessages = () => {
     if (other) {
-      const { token, refreshToken, id } = getCookie();
       socket.emit("check all messages", {
-        token,
-        refreshToken,
-        id,
+        cookie: getCookie(),
         other: other.id,
       });
     }
@@ -104,8 +101,7 @@ function Chatboard() {
         })
       );
     } else if (users) {
-      const { token = "", refreshToken = "", id = -1 } = getCookie();
-      socket.emit("get users", { token, refreshToken, id });
+      socket.emit("get users", { cookie: getCookie() });
     }
   };
   const handleChangeUser = ({ user }) => {
@@ -138,9 +134,8 @@ function Chatboard() {
   }, [other]);
 
   useEffect(() => {
-    const { token = "", refreshToken = "", id = "" } = getCookie();
-    socket.emit("user info", { token, refreshToken, id });
-    socket.emit("get users", { token, refreshToken, id });
+    socket.emit("user info", { cookie: getCookie() });
+    socket.emit("get users", { cookie: getCookie() });
     socket.on("user info", handlerUserInfo);
     socket.on("get users", handlerGetUsers);
     return () => {

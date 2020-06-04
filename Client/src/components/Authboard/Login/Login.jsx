@@ -19,9 +19,10 @@ function Login(props) {
     socket.emit("login", { email, password });
   };
 
-  const handlerLogin = ({ status, message, token, refreshToken, id }) => {
+  const handlerLogin = ({ status, message, cookie }) => {
     if (status === 200) {
-      setCookie(token, refreshToken, id);
+      const { token, refreshToken } = cookie;
+      setCookie(token, refreshToken);
       setAuthenticated(true);
     } else {
       setError(message);

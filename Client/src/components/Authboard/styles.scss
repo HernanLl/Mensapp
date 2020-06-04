@@ -69,6 +69,10 @@
     &__forgot {
       margin-left: auto;
     }
+    &__forgot-reference {
+      align-self: flex-start;
+      margin: 1rem 0;
+    }
     .row {
       display: flex;
       align-items: center;

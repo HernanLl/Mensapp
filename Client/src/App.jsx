@@ -49,8 +49,8 @@ function App() {
     }
   };
   const handlerNewToken = ({ newtoken }) => {
-    const { refreshToken, id } = getCookie();
-    setCookie(newtoken, refreshToken, id);
+    const { refreshToken } = getCookie();
+    setCookie(newtoken, refreshToken);
   };
   const handlerresize = () => {
     setRender(window.innerWidth >= 992);
@@ -62,9 +62,14 @@ function App() {
   };
   useEffect(() => {
     const location = window.location.protocol + "//" + window.location.host;
-    if (getCookie() && window.location.href !== location + "/#/signup/finish") {
-      const { id, token, refreshToken } = getCookie();
-      socket.emit("isAuthenticated", { id, token, refreshToken });
+    if (
+      getCookie() &&
+      (window.location.href === location + "/#/" ||
+        window.location.href === location + "/")
+    ) {
+      socket.emit("isAuthenticated", {
+        cookie: getCookie(),
+      });
       socket.on("isAuthenticated", handlerAuthenticated);
       return () => socket.off("isAuthenticated", handlerAuthenticated);
     } else {

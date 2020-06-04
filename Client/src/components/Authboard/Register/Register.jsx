@@ -5,9 +5,9 @@ import { Context } from "../../../context/Context";
 import Input from "../../Common/Input";
 
 function Register(props) {
-  const { setMessage, history } = props;
+  const { history } = props;
   //context
-  const { socket } = useContext(Context);
+  const { socket, setDialog } = useContext(Context);
   //form values and error
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -37,9 +37,15 @@ function Register(props) {
 
   const handlerRegister = ({ status, message }) => {
     if (status === 200) {
-      setMessage(
-        "Registrado exitosamente, por favor verifique su correo para continuar"
-      );
+      setDialog({
+        type: "success",
+        title: "Registrado exitosamente",
+        description: message,
+        display: true,
+        onClose: () => {
+          setDialog({});
+        },
+      });
       history.push("/");
     } else {
       setError(message);

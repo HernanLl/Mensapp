@@ -3,13 +3,13 @@ import PropTypes from "prop-types";
 import "./styles.scss";
 import { Context } from "../../../../context/Context";
 import Icon from "../../../Common/Icon";
-import { removeCookie } from "../../../../helper/helper";
+import { removeCookie, getCookie } from "../../../../helper/helper";
 
 function Dropdown(props) {
   const { openProfile } = props;
   const [active, setActive] = useState(false);
   const myref = useRef(null);
-  const { setAuthenticated } = useContext(Context);
+  const { socket, setAuthenticated } = useContext(Context);
   useEffect(() => {
     if (active) {
       myref.current.focus();
@@ -17,6 +17,7 @@ function Dropdown(props) {
   }, [active]);
 
   const onSignout = () => {
+    socket.emit("logout", { cookie: getCookie() });
     removeCookie();
     setAuthenticated(false);
   };

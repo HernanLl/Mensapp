@@ -25,8 +25,40 @@ function Editprofile(props) {
     urlprofile: "",
     urlbackground: "",
   };
+  const [oldpassword, setOldpassword] = useState("");
+  const [password, setPassword] = useState("");
+  const [repeatpassword, setRepeatpassword] = useState("");
 
-  const { socket } = useContext(Context);
+  const { socket, setDialog } = useContext(Context);
+
+  useEffect(() => {
+    socket.on("forgot password with old", ({ status, message }) => {
+      if (status === 200) {
+        setDialog({
+          type: "success",
+          title: "Contraseña cambiada",
+          description: message,
+          display: true,
+          onClose: () => {
+            setDialog({});
+          },
+        });
+        setPassword("");
+        setRepeatpassword("");
+        setOldpassword("");
+      } else if (status === 400) {
+        setDialog({
+          type: "danger",
+          title: "Error al cambiar contraseña",
+          description: message,
+          display: true,
+          onClose: () => {
+            setDialog({});
+          },
+        });
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (data) {
@@ -46,17 +78,45 @@ function Editprofile(props) {
 
   const onFinish = () => {
     setActive(false);
-    const { token, refreshToken, id } = getCookie();
     socket.emit("edit user", {
-      token,
-      refreshToken,
-      id,
+      cookie: getCookie(),
       name,
       location,
       state,
       urlprofile,
       urlbackground,
     });
+  };
+
+  const onChangePassword = (e) => {
+    if (e.preventDefault) e.preventDefault();
+    if (!password || !repeatpassword || !oldpassword) {
+      setDialog({
+        type: "danger",
+        title: "Error en los campos",
+        description: "Los campos no pueden estar vacios",
+        display: true,
+        onClose: () => {
+          setDialog({});
+        },
+      });
+    } else if (password !== repeatpassword) {
+      setDialog({
+        type: "danger",
+        title: "Error en los campos",
+        description: "Las contraseñas deben coincidir",
+        display: true,
+        onClose: () => {
+          setDialog({});
+        },
+      });
+    } else {
+      socket.emit("forgot password with old", {
+        old: oldpassword,
+        password,
+        cookie: getCookie(),
+      });
+    }
   };
 
   const style = active ? { left: "75px" } : { left: "-100%" };
@@ -123,9 +183,9 @@ function Editprofile(props) {
           color="#ccc"
           name="password-login"
           type="password"
-          value={""}
-          onChange={(value) => {}}
-          onPressEnter={() => {}}
+          value={oldpassword}
+          onChange={(value) => setOldpassword(value)}
+          onPressEnter={onChangePassword}
           placeholder="Contraseña actual"
           autocomplete="new-password"
         />
@@ -134,9 +194,9 @@ function Editprofile(props) {
           color="#ccc"
           name="password-login"
           type="password"
-          value={""}
-          onChange={(value) => {}}
-          onPressEnter={() => {}}
+          value={password}
+          onChange={(value) => setPassword(value)}
+          onPressEnter={onChangePassword}
           placeholder="Nueva Contraseña"
           autocomplete="new-password"
         />
@@ -145,13 +205,13 @@ function Editprofile(props) {
           color="#ccc"
           name="password-login"
           type="password"
-          value={""}
-          onChange={(value) => {}}
-          onPressEnter={() => {}}
+          value={repeatpassword}
+          onChange={(value) => setRepeatpassword(value)}
+          onPressEnter={onChangePassword}
           placeholder="Repetir contraseña"
           autocomplete="new-password"
         />
-        <button className="Form__button" onClick={() => {}}>
+        <button className="Form__button" onClick={onChangePassword}>
           Cambiar contraseña
         </button>
       </form>

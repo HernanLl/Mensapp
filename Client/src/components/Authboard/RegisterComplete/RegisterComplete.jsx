@@ -34,11 +34,8 @@ function RegisterComplete(props) {
 
   const onFinish = (e) => {
     e.preventDefault();
-    const { token, refreshToken, id } = getCookie();
     socket.emit("register complete", {
-      token,
-      refreshToken,
-      id,
+      cookie: getCookie(),
       urlprofile,
       urlbackground,
       state,

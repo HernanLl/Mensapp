@@ -68,19 +68,18 @@ export function getCookie() {
   try {
     return JSON.parse(Cookie.get("Auth") || {});
   } catch (err) {
-    return null;
+    return {};
   }
 }
 export function removeCookie() {
   Cookie.remove("Auth");
 }
-export function setCookie(token, refreshToken, id) {
+export function setCookie(token, refreshToken) {
   Cookie.set(
     "Auth",
     {
       token,
       refreshToken,
-      id,
     },
     { expires: 14 }
   );
