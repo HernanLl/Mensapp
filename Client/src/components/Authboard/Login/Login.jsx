@@ -15,7 +15,7 @@ function Login(props) {
   const [error, setError] = useState("");
 
   const onLogin = (e) => {
-    e.preventDefault();
+    if (e.preventDefault) e.preventDefault();
     socket.emit("login", { email, password });
   };
 
