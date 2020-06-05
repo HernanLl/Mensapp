@@ -1,5 +1,5 @@
 const USERBYID = `SELECT * FROM users WHERE id=$1`;
-const USERBYEMAIL = `SELECT * FROM users WHERE email=$1 and erased=false`;
+const USERBYEMAIL = `SELECT * FROM users WHERE email=$1`;
 const SAVEUSER = `INSERT INTO users(
     name,
     email,
@@ -16,8 +16,9 @@ const UPDATEUSER = `UPDATE users SET
     urlprofile=$4,
     urlbackground=$5,
     state=$6,
-    location=$7 
-    WHERE id=$8`;
+    location=$7,
+    erased=$8 
+    WHERE id=$9`;
 const VERIFYEMAIL = `UPDATE users SET verified=$1 WHERE id=$2`;
 const ERASEACCOUNT = `UPDATE users SET erased=$1 where id=$2`;
 const GETUSERS = `SELECT id,name,location,state,urlprofile,urlbackground,erased FROM users WHERE id!=$1`;
@@ -34,7 +35,7 @@ const ALLPENDINGS = `SELECT * FROM pendings`;
 const GETTOKENS = `SELECT * FROM tokens`;
 const UPDATETOKEN = `UPDATE tokens SET "token"=$1 where id=$2`;
 const SAVETOKEN = `INSERT INTO tokens VALUES($1,$2)`;
-const DELETETOKEN = `DELETE FROM tokens WHERE id=$1`;
+const REMOVETOKEN = `DELETE FROM tokens WHERE id=$1`;
 
 module.exports = {
   USERBYID,
@@ -56,5 +57,5 @@ module.exports = {
   GETTOKENS,
   UPDATETOKEN,
   SAVETOKEN,
-  DELETETOKEN,
+  REMOVETOKEN,
 };

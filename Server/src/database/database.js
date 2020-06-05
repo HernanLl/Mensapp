@@ -26,7 +26,7 @@ const {
   GETTOKENS,
   UPDATETOKEN,
   SAVETOKEN,
-  DELETETOKEN,
+  REMOVETOKEN,
 } = require("./querys");
 
 const defaultImages = [
@@ -78,6 +78,7 @@ async function updateUser({
   urlbackground,
   state,
   location,
+  erased,
 }) {
   try {
     const user = await userById(id);
@@ -89,6 +90,7 @@ async function updateUser({
       urlbackground || user.urlbackground,
       state || user.state,
       location || user.location,
+      erased !== null ? erased : user.erased,
       id,
     ]);
   } catch (err) {
@@ -214,9 +216,9 @@ async function saveToken(token, id) {
   }
 }
 
-async function deleteToken(id) {
+async function removeToken(id) {
   try {
-    pool.query(DELETETOKEN, [id]);
+    pool.query(REMOVETOKEN, [id]);
   } catch (err) {
     return err;
   }
@@ -240,6 +242,6 @@ module.exports = {
   verifyEmail,
   getTokens,
   saveToken,
-  deleteToken,
+  removeToken,
   defaultImages,
 };
