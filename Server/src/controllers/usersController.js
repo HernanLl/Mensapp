@@ -4,7 +4,7 @@ const {
   updateUser,
   getUsers,
   getLatestMessage,
-  removeUser,
+  removeToken,
   countMessagesNotViewed,
 } = require("../database/database");
 
@@ -151,17 +151,20 @@ function usersController(socket, sockets, timers) {
     socket.emit("get users", { users });
   });
 
-  //TODO - manejar borrado de usuarios y emision de evento broadcast
-  socket.on("remove user", async function ({ token }) {
-    const id = decodedToken(token);
-    if (id) {
-      await removeUser(id);
-    } else {
-      socket.emit("aux", {
+  socket.on("remove user", async function ({ cookie }) {
+    const { token, refreshToken } = cookie;
+    if (await !verifyCredentials(token, refreshToken, socket)) {
+      socket.emit("error server", {
         code: 401,
-        message: "Token de acceso invalido",
+        message: "No autorizado, credenciales invalidas",
       });
+      return;
     }
+    const id = decodedToken(token);
+    const index = sockets.findIndex((e) => e.id === id);
+    if (index !== -1) sockets.splice(index, 1);
+    updateUser({ id, erased: true });
+    removeToken(id);
   });
 }
 

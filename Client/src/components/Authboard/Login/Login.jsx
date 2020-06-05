@@ -1,12 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
-import { PropTypes } from "prop-types";
 import { Link } from "react-router-dom";
 import { Context } from "../../../context/Context";
 import Input from "../../Common/Input/";
 import { setCookie } from "../../../helper/helper";
 
-function Login(props) {
-  const { message } = props;
+function Login() {
   //context
   const { setAuthenticated, socket } = useContext(Context);
   //form values and error
@@ -15,7 +13,7 @@ function Login(props) {
   const [error, setError] = useState("");
 
   const onLogin = (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     socket.emit("login", { email, password });
   };
 
@@ -41,11 +39,6 @@ function Login(props) {
       <div className="FormContainer__brand">MENSAPP</div>
       <form className="Form">
         <p className="font-2 m-1">Bienvenido</p>
-        {message && !error && (
-          <div className="Form__message Form__message-success">
-            <p>{message}</p>
-          </div>
-        )}
         {error && (
           <div className="Form__message Form__message-error">
             <p>{error}</p>
@@ -59,7 +52,7 @@ function Login(props) {
           type="email"
           value={email}
           onChange={(value) => setEmail(value)}
-          onPressEnter={() => {}}
+          onPressEnter={onLogin}
           placeholder="Email"
           autocomplete="new-password"
         />
@@ -70,7 +63,7 @@ function Login(props) {
           type="password"
           value={password}
           onChange={(value) => setPassword(value)}
-          onPressEnter={() => {}}
+          onPressEnter={onLogin}
           placeholder="Contraseña"
           autocomplete="new-password"
         />
@@ -90,9 +83,5 @@ function Login(props) {
     </div>
   );
 }
-
-Login.propTypes = {
-  message: PropTypes.string,
-};
 
 export default Login;

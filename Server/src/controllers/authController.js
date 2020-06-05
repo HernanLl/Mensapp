@@ -15,7 +15,7 @@ const {
   saveUser,
   updateUser,
   saveToken,
-  deleteToken,
+  removeToken,
   defaultImages,
 } = require("../database/database");
 const cloduinary = require("cloudinary").v2;
@@ -51,6 +51,14 @@ function authController(socket, sockets) {
       });
       return;
     }
+    if (user.erased) {
+      socket.emit("login", {
+        status: 403,
+        message:
+          "Su cuenta actualmente esta borrada, registrese para reactivarla",
+      });
+      return;
+    }
     //generate tokens
     const token = generateToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
@@ -77,7 +85,7 @@ function authController(socket, sockets) {
       return;
     }
     const user = await userByEmail(email);
-    if (user) {
+    if (user && !user.erased) {
       socket.emit("register", {
         status: 400,
         message: "Ya existe un usuario con el mismo email",
@@ -85,7 +93,13 @@ function authController(socket, sockets) {
       return;
     }
     const hash = generateHash(password);
-    id = await saveUser({ name, email, password: hash });
+    let id = -1;
+    if (user.erased) {
+      id = user.id;
+      await updateUser({ id, name, password: hash, erased: false });
+    } else {
+      id = await saveUser({ name, email, password: hash });
+    }
     const token = generateToken(id);
     //Send email
     const link = process.env.URL + "/verification/" + token;
@@ -105,6 +119,7 @@ function authController(socket, sockets) {
     cookie,
   }) {
     const { token, refreshToken } = cookie;
+    const id = decodedToken(token);
     if (await !verifyCredentials(token, refreshToken, socket)) {
       socket.emit("error server", {
         code: 401,
@@ -229,7 +244,7 @@ function authController(socket, sockets) {
   socket.on("logout", async function ({ cookie }) {
     const { token } = cookie;
     const id = decodedToken(token);
-    await deleteToken(id);
+    await removeToken(id);
     const index = sockets.findIndex((e) => e.id === id);
     if (index !== -1) {
       sockets.splice(index, 1);

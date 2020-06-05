@@ -21,6 +21,11 @@ function Dropdown(props) {
     removeCookie();
     setAuthenticated(false);
   };
+  const onRemoveUser = () => {
+    socket.emit("remove user", { cookie: getCookie() });
+    removeCookie();
+    setAuthenticated(false);
+  };
 
   const displayOptions = active ? "Dropdown__options--active" : "";
   const style = {
@@ -54,7 +59,7 @@ function Dropdown(props) {
         <div className="Dropdown__item" onClick={onSignout}>
           <p>Cerrar sesión</p>
         </div>
-        <div className="Dropdown__item" onClick={() => {}}>
+        <div className="Dropdown__item" onClick={onRemoveUser}>
           <p>Borrar cuenta</p>
         </div>
       </div>

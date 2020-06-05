@@ -14,14 +14,13 @@ import Chatboard from "./components/ChatBoard";
 import NotFound from "./components/NotFound";
 
 const socket = io(
-  process.env.NODE_ENV === "development" ? "http://localhost:3000" : "/",
-  { rejectUnauthorized: false }
+  process.env.NODE_ENV === "development" ? "http://localhost:3000" : "/"
 );
 
 function App() {
   const [authenticated, setAuthenticated] = useState();
-  const [render, setRender] = useState(window.innerWidth >= 992);
-  const [dialog, setDialog] = useState({ message: "Hola" });
+  const [isPhone, setIsPhone] = useState(window.innerWidth < 992);
+  const [dialog, setDialog] = useState({});
   const [loading, setLoading] = useState(true);
   const {
     type,
@@ -33,8 +32,8 @@ function App() {
     onSuccess,
   } = dialog;
 
-  const handlerError = ({ code, message }) => {
-    if (code === 401 || code === 403 || code === 500) {
+  const handlerError = ({ status, message }) => {
+    if (status === 401 || status === 403) {
       removeCookie();
       setAuthenticated(false);
       setDialog({
@@ -52,10 +51,9 @@ function App() {
     const { refreshToken } = getCookie();
     setCookie(newtoken, refreshToken);
   };
-  const handlerresize = () => {
-    setRender(window.innerWidth >= 992);
+  const handlerResize = () => {
+    setIsPhone(window.innerWidth < 992);
   };
-
   const handlerAuthenticated = () => {
     setAuthenticated(true);
     setLoading(false);
@@ -79,19 +77,20 @@ function App() {
   useEffect(() => {
     socket.on("error server", handlerError);
     socket.on("new token", handlerNewToken);
-    window.addEventListener("resize", handlerresize);
+    window.addEventListener("resize", handlerResize);
     return () => {
       socket.off("error server", handlerError);
       socket.off("new token", handlerNewToken);
-      window.removeEventListener("resize", handlerresize);
+      window.removeEventListener("resize", handlerResize);
     };
   }, []);
-  return render ? (
+  return !isPhone ? (
     <Context.Provider
       value={{ authenticated, setAuthenticated, socket, dialog, setDialog }}
     >
-      {loading && <Loading />}
-      {!loading && (
+      {loading ? (
+        <Loading />
+      ) : (
         <div
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => e.preventDefault()}
@@ -119,6 +118,7 @@ function App() {
       )}
     </Context.Provider>
   ) : (
+    //TODO - poner una pagina para mobile info
     <div
       style={{
         display: "flex",
@@ -133,7 +133,5 @@ function App() {
     </div>
   );
 }
-
-App.propTypes = {};
 
 export default App;
