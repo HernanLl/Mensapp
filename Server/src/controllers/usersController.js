@@ -23,7 +23,6 @@ function usersController(socket, sockets, timers) {
     if (index === -1) {
       sockets.push({ socket, id });
     } else {
-      console.info("Actualizado socket " + socket.connected);
       sockets[index] = { socket, id };
     }
     //clean the timeout of disconnect
@@ -164,7 +163,8 @@ function usersController(socket, sockets, timers) {
     const index = sockets.findIndex((e) => e.id === id);
     if (index !== -1) sockets.splice(index, 1);
     updateUser({ id, erased: true });
-    removeToken(id);
+    await removeToken(id);
+    socket.broadcast.emit("remove user", { id });
   });
 }
 

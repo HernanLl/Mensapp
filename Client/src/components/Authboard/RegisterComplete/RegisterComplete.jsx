@@ -33,7 +33,7 @@ function RegisterComplete(props) {
   }, []);
 
   const onFinish = (e) => {
-    if (e.preventDefault) e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     socket.emit("register complete", {
       cookie: getCookie(),
       urlprofile,

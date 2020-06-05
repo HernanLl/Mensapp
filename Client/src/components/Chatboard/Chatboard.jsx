@@ -88,8 +88,9 @@ function Chatboard() {
     setUsers(users);
   };
   const handleChangeConnection = ({ id, connection }) => {
-    const index = users.findIndex((e) => e.id === id);
-    if (index !== -1) {
+    const user = users.find((e) => e.id === id);
+    console.log(user);
+    if (user && !user.erased) {
       setUsers(
         users.map((e) => {
           if (e.id === id)
@@ -100,7 +101,7 @@ function Chatboard() {
           else return e;
         })
       );
-    } else if (users) {
+    } else {
       socket.emit("get users", { cookie: getCookie() });
     }
   };
@@ -116,16 +117,23 @@ function Chatboard() {
       })
     );
   };
+  const handlerRemoveUser = ({ id }) => {
+    if (users.find((user) => user.id === id)) {
+      alert("hay que cambiar un usuario");
+      socket.emit("get users", { cookie: getCookie() });
+    }
+  };
   //use effects
   useEffect(() => {
     socket.on("new message", onNewMessage);
     socket.on("change user connection", handleChangeConnection);
     socket.on("change user", handleChangeUser);
-
+    socket.on("remove user", handlerRemoveUser);
     return () => {
       socket.off("new message", onNewMessage);
       socket.off("change user connection", handleChangeConnection);
       socket.off("change user", handleChangeUser);
+      socket.off("remove user", handlerRemoveUser);
     };
   }, [users, other]);
 

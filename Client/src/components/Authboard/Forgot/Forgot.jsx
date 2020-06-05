@@ -68,12 +68,12 @@ function Forgot(props) {
   }, []);
 
   const onSendEmail = (e) => {
-    if (e.preventDefault) e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     setDisable(true);
     socket.emit("forgot password email", { email });
   };
   const onChangePassword = (e) => {
-    if (e.preventDefault) e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     if (!password || !repeatpassword) {
       setDialog({
         type: "danger",

@@ -94,11 +94,11 @@ function authController(socket, sockets) {
     }
     const hash = generateHash(password);
     let id = -1;
-    if (user.erased) {
+    if (user) {
       id = user.id;
       await updateUser({ id, name, password: hash, erased: false });
     } else {
-      id = await saveUser({ name, email, password: hash });
+      id = await saveUser({ name, email, password: hash, erased: false });
     }
     const token = generateToken(id);
     //Send email
@@ -106,8 +106,7 @@ function authController(socket, sockets) {
     sendEmail("hernanllull@gmail.com", email, "Bienvenido a MENSAPP", link);
     socket.emit("register", {
       status: 200,
-      message:
-        "Registrado exitosamente, ingrese a su email para verificar su cuenta",
+      message: "Ingrese a su email para verificar su cuenta",
     });
   });
 

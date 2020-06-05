@@ -1,4 +1,8 @@
-const { getPublicId, verifyCredentials } = require("../helper/helper");
+const {
+  getPublicId,
+  verifyCredentials,
+  decodedToken,
+} = require("../helper/helper");
 const {
   updateUser,
   setNewPending,

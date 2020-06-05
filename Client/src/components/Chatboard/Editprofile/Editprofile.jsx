@@ -89,7 +89,7 @@ function Editprofile(props) {
   };
 
   const onChangePassword = (e) => {
-    if (e.preventDefault) e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     if (!password || !repeatpassword || !oldpassword) {
       setDialog({
         type: "danger",

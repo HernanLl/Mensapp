@@ -27,7 +27,7 @@ function Register(props) {
   };
 
   const onRegister = (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     const err = validate();
     if (err) setError(err);
     else {
