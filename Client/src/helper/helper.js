@@ -84,3 +84,10 @@ export function setCookie(token, refreshToken) {
     { expires: 14 }
   );
 }
+export function isHome() {
+  const location = window.location.protocol + "//" + window.location.host;
+  return (
+    window.location.href === location + "/#/" ||
+    window.location.href === location + "/"
+  );
+}

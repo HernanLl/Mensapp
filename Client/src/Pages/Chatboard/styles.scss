@@ -1,0 +1,9 @@
+.Chatboard {
+  display: flex;
+  height: 100vh;
+  background: white;
+  &__1 {
+    width: 350;
+    height: 100vh;
+  }
+}

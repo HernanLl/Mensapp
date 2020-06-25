@@ -4,14 +4,14 @@ import "./styles.scss";
 import { Context } from "./context/Context";
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import io from "socket.io-client";
-import { getCookie, removeCookie, setCookie } from "./helper/helper";
+import { getCookie, removeCookie, setCookie, isHome } from "./helper/helper";
 
 //react components
-import Dialog from "./components/Common/Dialog";
-import Loading from "./components/Common/Loading";
-import Authboard from "./components/Authboard";
-import Chatboard from "./components/ChatBoard";
-import NotFound from "./components/NotFound";
+import Dialog from "./Common/Dialog";
+import Loading from "./Common/Loading";
+import Authboard from "./Pages/Authboard";
+import Chatboard from "./Pages/ChatBoard";
+import NotFound from "./Pages/NotFound";
 
 const socket = io(
   process.env.NODE_ENV === "development" ? "http://localhost:3000" : "/"
@@ -60,11 +60,7 @@ function App() {
   };
   useEffect(() => {
     const location = window.location.protocol + "//" + window.location.host;
-    if (
-      getCookie() &&
-      (window.location.href === location + "/#/" ||
-        window.location.href === location + "/")
-    ) {
+    if (getCookie() && isHome()) {
       socket.emit("isAuthenticated", {
         cookie: getCookie(),
       });
