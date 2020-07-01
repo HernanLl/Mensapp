@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import "./styles.scss";
-import useList from "Hooks/useList";
-
-import Userbox from "Common/Userbox";
-import Icon from "Common/Icon";
+import Userbox from "Common/Userbox/Userbox";
+import Icon from "Common/Icon/Icon";
+import { useMemo } from "react";
 
 function Userslist(props) {
   const { users, onClickUser } = props;
@@ -12,18 +11,20 @@ function Userslist(props) {
   const [filterusers, setFilterusers] = useState([]);
   const [filterconversations, setFilterconversations] = useState([]);
 
-  useEffect(() => {
+  useMemo(() => {
     const otherusers = users.filter(
       (elem) =>
         elem.name.toLowerCase().indexOf(value.toLowerCase()) === 0 &&
         !elem.latestmessage
     );
+    setFilterusers(otherusers);
+  }, [value, users]);
+  useMemo(() => {
     const conversations = users.filter(
       (elem) =>
         elem.name.toLowerCase().indexOf(value.toLowerCase()) === 0 &&
         elem.latestmessage
     );
-    setFilterusers(otherusers);
     setFilterconversations(conversations);
   }, [value, users]);
 
@@ -41,11 +42,15 @@ function Userslist(props) {
       {filterconversations.length > 0 && (
         <p className="Userslist__reference">Conversaciones recientes</p>
       )}
-      {useList(filterconversations, Userbox, onClickUser)}
+      {filterconversations.map((user) => (
+        <Userbox key={user.id} {...user} onClick={onClickUser} />
+      ))}
       {filterusers.length > 0 && (
         <p className="Userslist__reference">Usuarios</p>
       )}
-      {useList(filterusers, Userbox, onClickUser)}
+      {filterusers.map((user) => (
+        <Userbox key={user.id} {...user} onClick={onClickUser} />
+      ))}
     </div>
   );
 }

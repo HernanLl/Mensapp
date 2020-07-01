@@ -3,10 +3,10 @@ import "./styles.scss";
 import file from "../../assets/Board.svg";
 import { Switch, Route, Redirect } from "react-router-dom";
 
-import Login from "./Login";
-import Register from "./Register";
-import RegisterComplete from "./RegisterComplete";
-import Forgot from "./Forgot";
+import RegisterComplete from "./RegisterComplete/RegisterCompleteContainer";
+import Login from "./Login/LoginContainer";
+import Register from "./Register/RegisterContainer";
+import Forgot from "./Forgot/ForgotContainer";
 
 function Authboard() {
   return (

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ReactDOM from "react-dom";
 import "babel-polyfill";
 import "./styles.scss";
 import { Context } from "./context/Context";
@@ -13,9 +14,10 @@ import Authboard from "./Pages/Authboard";
 import Chatboard from "./Pages/ChatBoard";
 import NotFound from "./Pages/NotFound";
 
-const socket = io(
-  process.env.NODE_ENV === "development" ? "http://localhost:3000" : "/"
-);
+/*eslint-disable no-undef*/
+const mode = process.env.NODE_ENV;
+/*eslint-enable no-undef*/
+const socket = io(mode === "development" ? "http://localhost:3000" : "/");
 
 function App() {
   const [authenticated, setAuthenticated] = useState();
@@ -59,7 +61,6 @@ function App() {
     setLoading(false);
   };
   useEffect(() => {
-    const location = window.location.protocol + "//" + window.location.host;
     if (getCookie() && isHome()) {
       socket.emit("isAuthenticated", {
         cookie: getCookie(),
@@ -91,15 +92,18 @@ function App() {
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => e.preventDefault()}
         >
-          <Dialog
-            type={type}
-            title={title}
-            display={display}
-            options={options}
-            description={description}
-            onClose={onClose}
-            onSuccess={onSuccess}
-          />
+          {ReactDOM.createPortal(
+            <Dialog
+              type={type}
+              title={title}
+              display={display}
+              options={options}
+              description={description}
+              onClose={onClose}
+              onSuccess={onSuccess}
+            />,
+            document.getElementById("modal")
+          )}
           <Router>
             <Switch>
               <Route
@@ -125,7 +129,7 @@ function App() {
         textAlign: "center",
       }}
     >
-      La pagina no se encuentra disponible para su dispositivo
+      La página no se encuentra disponible para su dispositivo
     </div>
   );
 }

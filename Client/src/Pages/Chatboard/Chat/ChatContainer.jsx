@@ -3,27 +3,51 @@ import PropTypes from "prop-types";
 import { Context } from "context/Context";
 import { newDate, getCookie } from "helper/helper";
 import Chat from "./Chat";
+import useObserver from "../../../Hooks/useObserver";
+
+/*eslint-disable no-undef*/
+const mode = process.env.NODE_ENV;
+/*eslint-enable no-undef*/
 
 function ChatContainer(props) {
   const { my, other, active, onNewMessage, onClickInfo } = props;
-  //local state
+
   const [inputmessage, setInputmessage] = useState(""); //the actual message in input
   const [messages, setMessages] = useState([]); //list messages
   const [loadfile, setLoadfile] = useState(false); //used to render container to drop images
   const [urlload, setUrlload] = useState(""); //contains the url of the dropped image
   const [file, setFile] = useState(); //contains File element js result of drop image
   const [quantity, setQuantity] = useState(1); // used to reduce the number of messages
-  //context and refs for handler focus
+
+  //context and refs for handler focus and scrolls
   const { socket, setDialog } = useContext(Context);
-  const scroll_ref = useRef(null);
-  const preview_ref = useRef(null);
-  const input_ref = useRef(null);
-  const latestmessage_ref = useRef(null);
+  const bottomScrollRef = useRef(null);
+  const previewRef = useRef(null);
+  const inputRef = useRef(null);
+  const latestMessageRef = useRef(null);
+
+  const [scrollinfinity, setScrollInfinity] = useState(false);
+
+  const onObserveRef = (entry) => {
+    if (entry.isIntersecting && scrollinfinity) {
+      bottomScrollRef.current && bottomScrollRef.current.scrollIntoView();
+      onMostMessages();
+    } else setScrollInfinity(true);
+  };
+
+  const [mostMessagesRef] = useObserver({ threshold: 0.5 }, onObserveRef, [
+    other,
+    scrollinfinity,
+    quantity,
+  ]);
 
   const onPressEnter = (e) => {
     if (e.keyCode === 13) {
       onSendMessage();
     }
+  };
+  const onPressEsc = (e) => {
+    if (e.keyCode === 27) cleanFileLoader();
   };
   const onDrop = (e) => {
     if (e.dataTransfer.files && e.dataTransfer.files.length > 1) {
@@ -53,7 +77,7 @@ function ChatContainer(props) {
         });
       } else {
         setFile(e.dataTransfer.files[0]);
-        input_ref.current.focus();
+        inputRef.current.focus();
       }
     }
   };
@@ -95,7 +119,7 @@ function ChatContainer(props) {
         };
         const { url } = await (
           await fetch(
-            process.env.NODE_ENV === "development"
+            mode === "development"
               ? "http://localhost:3000/loadfile"
               : "/loadfile",
             options
@@ -127,7 +151,7 @@ function ChatContainer(props) {
       };
       const res = await (
         await fetch(
-          process.env.NODE_ENV === "development"
+          mode === "development"
             ? "http://localhost:3000/generateSignature"
             : "/generateSignature",
           options
@@ -150,7 +174,7 @@ function ChatContainer(props) {
         if (!error && result && result.event === "success") {
           setUrlload(result.info.url);
           setLoadfile(true);
-          input_ref.current.focus();
+          inputRef.current.focus();
           socket.emit("new pending", {
             url: result.info.url,
             cookie: getCookie(),
@@ -166,7 +190,7 @@ function ChatContainer(props) {
   };
   const onDragEnter = () => {
     setLoadfile(true);
-    preview_ref.current.focus();
+    previewRef.current.focus();
   };
   const onDragLeave = () => {
     setLoadfile(false);
@@ -229,10 +253,12 @@ function ChatContainer(props) {
     }
   }, [file]);
   useEffect(() => {
-    scroll_ref.current && scroll_ref.current.scrollIntoView();
+    if (messages.length !== 0) {
+      bottomScrollRef.current && bottomScrollRef.current.scrollIntoView();
+    }
   }, [messages]);
   useEffect(() => {
-    latestmessage_ref.current && latestmessage_ref.current.scrollIntoView();
+    latestMessageRef.current && latestMessageRef.current.scrollIntoView();
   }, [quantity]);
 
   return (
@@ -240,7 +266,6 @@ function ChatContainer(props) {
       other={other}
       active={active}
       onClickInfo={onClickInfo}
-      cleanFileLoader={cleanFileLoader}
       onDragEnter={onDragEnter}
       onDrop={onDrop}
       onDragLeave={onDragLeave}
@@ -248,11 +273,13 @@ function ChatContainer(props) {
       urlload={urlload}
       quantity={quantity}
       messages={messages}
-      preview_ref={preview_ref}
-      input_ref={input_ref}
-      scroll_ref={scroll_ref}
-      latestmessage_ref={latestmessage_ref}
+      previewRef={previewRef}
+      inputRef={inputRef}
+      bottomScrollRef={bottomScrollRef}
+      latestMessageRef={latestMessageRef}
+      mostMessagesRef={mostMessagesRef}
       onPressEnter={onPressEnter}
+      onPressEsc={onPressEsc}
       openWidget={openWidget}
       onSendMessage={onSendMessage}
       onMostMessages={onMostMessages}

@@ -50,10 +50,33 @@ function getDay(day) {
 }
 
 export function showDatetime(datetime) {
-  const d = new Date(datetime);
-  let newdatetime = `${getDay(d.getDay())} `;
-  newdatetime += d.getHours() > 9 ? `${d.getHours()}:` : `0${d.getHours()}:`;
-  newdatetime += d.getMinutes() > 9 ? d.getMinutes() : `0${d.getMinutes()}`;
+  const actualDate = new Date();
+  const messageDate = new Date(datetime);
+  const diff = actualDate - messageDate;
+  let newdatetime = "";
+  if (
+    diff < 1000 * 60 * 60 * 24 &&
+    actualDate.getDate() === messageDate.getDate()
+  ) {
+    newdatetime = "Hoy ";
+  } else if (
+    diff < 1000 * 60 * 60 * 24 * 2 &&
+    actualDate.getDate() - messageDate.getDate() === 1
+  ) {
+    newdatetime = "Ayer ";
+  } else if (actualDate.getDate() - messageDate.getDate() < 7) {
+    newdatetime = `${getDay(messageDate.getDay())} `;
+  } else {
+    newdatetime = messageDate.toLocaleDateString() + " ";
+  }
+  newdatetime +=
+    messageDate.getHours() > 9
+      ? `${messageDate.getHours()}:`
+      : `0${messageDate.getHours()}:`;
+  newdatetime +=
+    messageDate.getMinutes() > 9
+      ? messageDate.getMinutes()
+      : `0${messageDate.getMinutes()}`;
   return newdatetime;
 }
 

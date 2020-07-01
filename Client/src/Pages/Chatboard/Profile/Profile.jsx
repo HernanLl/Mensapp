@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import "./styles.scss";
 import { convertUrlProfile } from "helper/helper";
@@ -15,16 +15,11 @@ function Profile(props) {
     urlbackground,
     active,
     setActive,
+    profileloaded,
+    setProfile,
+    backgroundloaded,
+    setBackground,
   } = props;
-  const [profileloaded, setProfile] = useState(false);
-  const [backgroundloaded, setBackground] = useState(false);
-
-  useLayoutEffect(() => {
-    setProfile(false);
-  }, [urlprofile]);
-  useLayoutEffect(() => {
-    setBackground(false);
-  }, [urlbackground]);
 
   //styles
   let styles = {};
@@ -55,13 +50,7 @@ function Profile(props) {
           />
         </div>
         <div className="Profile__profile">
-          <img
-            alt="profile"
-            src={profile}
-            onLoad={() => {
-              setProfile(true);
-            }}
-          />
+          <img alt="profile" src={profile} onLoad={() => setProfile(true)} />
         </div>
         <div className="Profile__Info">
           <p className="Info__title">{name}</p>
@@ -78,7 +67,6 @@ function Profile(props) {
 }
 
 Profile.propTypes = {
-  id: PropTypes.number,
   name: PropTypes.string,
   location: PropTypes.string,
   state: PropTypes.string,
@@ -86,6 +74,10 @@ Profile.propTypes = {
   urlbackground: PropTypes.string,
   active: PropTypes.bool,
   setActive: PropTypes.func,
+  profileloaded: PropTypes.bool,
+  setProfile: PropTypes.func,
+  backgroundloaded: PropTypes.bool,
+  setBackground: PropTypes.func,
 };
 
 export default Profile;

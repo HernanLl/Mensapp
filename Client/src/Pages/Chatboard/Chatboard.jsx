@@ -5,10 +5,10 @@ import { getCookie } from "helper/helper";
 
 //components
 import Navbar from "./Navbar";
-import Profile from "./Profile";
 import Userslist from "./Userslist";
-import Editprofile from "./Editprofile";
 import ChatContainer from "./Chat/ChatContainer";
+import Profile from "./Profile/ProfileContainer";
+import EditProfile from "./Editprofile/EditProfileContainer";
 
 function Chatboard() {
   const { socket } = useContext(Context);
@@ -20,8 +20,16 @@ function Chatboard() {
   const [views, setViews] = useState(["user"]);
 
   //users information(users), my information(user) and information for other user(other)
-  const [user, setUser] = useState({});
-  const [other, setOther] = useState({});
+  const defaultUser = {
+    id: null,
+    name: "",
+    urlprofile: "",
+    urlbackground: "",
+    state: "",
+    location: "",
+  };
+  const [user, setUser] = useState(defaultUser);
+  const [other, setOther] = useState(defaultUser);
   const [users, setUsers] = useState([]);
 
   //local event handlers
@@ -89,7 +97,6 @@ function Chatboard() {
   };
   const handleChangeConnection = ({ id, connection }) => {
     const user = users.find((e) => e.id === id);
-    console.log(user);
     if (user && !user.erased) {
       setUsers(
         users.map((e) => {
@@ -153,9 +160,10 @@ function Chatboard() {
   }, []);
 
   const actual_data = views[views.length - 1] === "user" ? user : other;
+
   return (
     <div className="Chatboard">
-      <Editprofile active={edit} setActive={setEdit} data={user} />
+      <EditProfile active={edit} setActive={setEdit} data={user} />
       <Navbar
         urlprofile={user.urlprofile}
         setEdit={setEdit}

@@ -1,39 +1,10 @@
-import React, { useState, useContext, useEffect } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { Context } from "context/Context";
-import { setCookie } from "helper/helper";
 import Input from "Common/Input";
 
-function Login() {
-  //context
-  const { setAuthenticated, socket } = useContext(Context);
-  //form values and error
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [error, setError] = useState("");
-
-  const onLogin = (e) => {
-    if (e && e.preventDefault) e.preventDefault();
-    socket.emit("login", { email, password });
-  };
-
-  const handlerLogin = ({ status, message, cookie }) => {
-    if (status === 200) {
-      const { token, refreshToken } = cookie;
-      setCookie(token, refreshToken);
-      setAuthenticated(true);
-    } else {
-      setError(message);
-    }
-  };
-
-  useEffect(() => {
-    socket.on("login", handlerLogin);
-    return () => {
-      socket.off("login", handlerLogin);
-    };
-  }, []);
-
+function Login(props) {
+  const { error, email, setEmail, password, setPassword, onLogin } = props;
   return (
     <div className="FormContainer">
       <div className="FormContainer__brand">MENSAPP</div>
@@ -76,12 +47,20 @@ function Login() {
         <p className="font-1">
           ¿No tienes cuenta?,{" "}
           <Link className="Form__link" to="/signup">
-            Registrate
+            Regístrate
           </Link>
         </p>
       </form>
     </div>
   );
 }
+Login.propTypes = {
+  error: PropTypes.string,
+  email: PropTypes.string,
+  password: PropTypes.string,
+  setEmail: PropTypes.func,
+  setPassword: PropTypes.func,
+  onLogin: PropTypes.func,
+};
 
 export default Login;

@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import "./styles.scss";
-import { convertUrlProfile, getCookie } from "helper/helper";
-import { Context } from "context/Context";
-import useWidget from "HOC/useWidget";
+import { convertUrlProfile } from "helper/helper";
 
 import Input from "Common/Input";
 import Icon from "Common/Icon";
@@ -11,114 +9,26 @@ import Textarea from "Common/Textarea";
 
 function Editprofile(props) {
   const {
+    urlprofile,
+    name,
+    datalocal,
+    location,
+    state,
+    oldpassword,
+    password,
+    repeatpassword,
     active,
-    setActive,
-    images,
-    setImages,
+  } = props; //data
+  const {
+    setDatalocal,
+    urlbackground,
+    onFinish,
+    setOldpassword,
+    setPassword,
+    setRepeatpassword,
+    onChangePassword,
     setSelectedImage,
-    data,
-  } = props;
-  const [datalocal, setDatalocal] = useState();
-  const { name, state, location, urlprofile, urlbackground } = datalocal || {
-    name: "",
-    state: "",
-    location: "",
-    urlprofile: "",
-    urlbackground: "",
-  };
-  const [oldpassword, setOldpassword] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatpassword, setRepeatpassword] = useState("");
-
-  const { socket, setDialog } = useContext(Context);
-
-  useEffect(() => {
-    socket.on("forgot password with old", ({ status, message }) => {
-      if (status === 200) {
-        setDialog({
-          type: "success",
-          title: "Contraseña cambiada",
-          description: message,
-          display: true,
-          onClose: () => {
-            setDialog({});
-          },
-        });
-        setPassword("");
-        setRepeatpassword("");
-        setOldpassword("");
-      } else if (status === 400) {
-        setDialog({
-          type: "danger",
-          title: "Error al cambiar contraseña",
-          description: message,
-          display: true,
-          onClose: () => {
-            setDialog({});
-          },
-        });
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    if (data) {
-      setDatalocal(data);
-      setImages([
-        data.urlprofile || images[0],
-        data.urlbackground || images[1],
-      ]);
-    }
-  }, [data]);
-  useEffect(() => {
-    setDatalocal({ ...datalocal, urlprofile: images[0] });
-  }, [images[0]]);
-  useEffect(() => {
-    setDatalocal({ ...datalocal, urlbackground: images[1] });
-  }, [images[1]]);
-
-  const onFinish = () => {
-    setActive(false);
-    socket.emit("edit user", {
-      cookie: getCookie(),
-      name,
-      location,
-      state,
-      urlprofile,
-      urlbackground,
-    });
-  };
-
-  const onChangePassword = (e) => {
-    if (e && e.preventDefault) e.preventDefault();
-    if (!password || !repeatpassword || !oldpassword) {
-      setDialog({
-        type: "danger",
-        title: "Error en los campos",
-        description: "Los campos no pueden estar vacios",
-        display: true,
-        onClose: () => {
-          setDialog({});
-        },
-      });
-    } else if (password !== repeatpassword) {
-      setDialog({
-        type: "danger",
-        title: "Error en los campos",
-        description: "Las contraseñas deben coincidir",
-        display: true,
-        onClose: () => {
-          setDialog({});
-        },
-      });
-    } else {
-      socket.emit("forgot password with old", {
-        old: oldpassword,
-        password,
-        cookie: getCookie(),
-      });
-    }
-  };
+  } = props; //functions
 
   const style = active ? { left: "75px" } : { left: "-100%" };
   const profile = convertUrlProfile(urlprofile);
@@ -152,7 +62,7 @@ function Editprofile(props) {
           width="100%"
           height="200px"
           placeholder="Estado"
-          helper="(ej.: una frase, cancion o lo que quieras)"
+          helper="(ej.: una frase, canción o lo que quieras)"
           textcolor="white"
         />
         <div className="row">
@@ -174,10 +84,16 @@ function Editprofile(props) {
           </div>
         </div>
         <button className="Form__button" onClick={onFinish}>
-          Finalizar edicion
+          Finalizar edición
         </button>
       </div>
-      <form className="Form">
+      <form
+        className="Form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          onChangePassword();
+        }}
+      >
         <p className="font-2 m-1">Cambiar contraseña</p>
         <Input
           icon="KEY"
@@ -197,7 +113,6 @@ function Editprofile(props) {
           type="password"
           value={password}
           onChange={(value) => setPassword(value)}
-          onPressEnter={onChangePassword}
           placeholder="Nueva Contraseña"
           autocomplete="new-password"
         />
@@ -208,25 +123,33 @@ function Editprofile(props) {
           type="password"
           value={repeatpassword}
           onChange={(value) => setRepeatpassword(value)}
-          onPressEnter={onChangePassword}
           placeholder="Repetir contraseña"
           autocomplete="new-password"
         />
-        <button className="Form__button" onClick={onChangePassword}>
-          Cambiar contraseña
-        </button>
+        <button className="Form__button">Cambiar contraseña</button>
       </form>
     </div>
   );
 }
 
 Editprofile.propTypes = {
+  urlprofile: PropTypes.string,
+  urlbackground: PropTypes.string,
+  name: PropTypes.string,
+  datalocal: PropTypes.object,
+  location: PropTypes.string,
+  state: PropTypes.string,
+  oldpassword: PropTypes.string,
+  password: PropTypes.string,
+  repeatpassword: PropTypes.string,
   active: PropTypes.bool,
-  setActive: PropTypes.func,
-  images: PropTypes.array,
-  setImages: PropTypes.func,
+  setDatalocal: PropTypes.func,
+  onFinish: PropTypes.func,
+  setOldpassword: PropTypes.func,
+  setPassword: PropTypes.func,
+  setRepeatpassword: PropTypes.func,
+  onChangePassword: PropTypes.func,
   setSelectedImage: PropTypes.func,
-  data: PropTypes.object,
 };
 
-export default useWidget(Editprofile);
+export default Editprofile;

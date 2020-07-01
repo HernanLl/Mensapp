@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import "./styles.scss";
 
 //components
@@ -7,43 +8,47 @@ import Icon from "Common/Icon";
 
 function Chat(props) {
   const {
+    previewRef,
+    inputRef,
+    bottomScrollRef,
+    latestMessageRef,
+    mostMessagesRef,
+  } = props; //references
+  const {
     other,
     active,
-    onClickInfo,
-    cleanFileLoader,
-    onDragEnter,
-    onDrop,
-    onDragLeave,
     loadfile,
     urlload,
     messages,
-    preview_ref,
-    input_ref,
-    scroll_ref,
-    mostmessages_ref,
+    quantity,
+    inputmessage,
+  } = props; //data
+  const {
+    onClickInfo,
+    onDragEnter,
+    onDrop,
+    onDragLeave,
     onPressEnter,
+    onPressEsc,
     openWidget,
     onSendMessage,
-    quantity,
     onMostMessages,
-    inputmessage,
     setInputmessage,
-    latestmessage_ref,
-  } = props;
+  } = props; //events
+
   const { id, name = "", state = "" } = other;
 
   const stylecontainer = active
     ? { width: "calc(100% - 775px)" }
     : { width: "calc(100% - 425px)" };
 
+  let latest =
+    quantity * 10 < messages.length
+      ? 10
+      : 10 - (quantity * 10 - messages.length);
+
   return id ? (
-    <div
-      className="Chat"
-      style={stylecontainer}
-      onKeyDown={(e) => {
-        if (e.keyCode === 27) cleanFileLoader();
-      }}
-    >
+    <div className="Chat" style={stylecontainer} onKeyDown={onPressEsc}>
       <div className="Chat__info" onClick={onClickInfo}>
         <p className="Info__name">{name}</p>
         <p className="Info__state">{state}</p>
@@ -52,7 +57,7 @@ function Chat(props) {
         className="Chat__listMessages scroll"
         onDragEnter={onDragEnter}
         tabIndex="1"
-        ref={preview_ref}
+        ref={previewRef}
       >
         {loadfile && (
           <div
@@ -67,8 +72,8 @@ function Chat(props) {
             </div>
           </div>
         )}
-        {quantity < messages.length / 10 ? (
-          <div ref={mostmessages_ref} className="Chat__mostmessages">
+        {quantity < messages.length / 10 && (
+          <div ref={mostMessagesRef} className="Chat__mostmessages">
             <Icon
               name="ADD"
               size={30}
@@ -77,21 +82,17 @@ function Chat(props) {
               onClick={onMostMessages}
             />
           </div>
-        ) : null}
-        {messages.slice(quantity * -10).map((message, index) => {
-          let cond =
-            quantity * 10 > messages.length
-              ? messages.length - (quantity - 1) * 10
-              : (quantity - 1) * 10;
-          if (index !== cond) {
-            return <Message key={index} {...message} />;
-          } else {
-            return (
-              <Message key={index} {...message} mainref={latestmessage_ref} />
-            );
-          }
-        })}
-        <div ref={scroll_ref}></div>
+        )}
+        {messages
+          .slice(quantity * -10)
+          .map((message, index) =>
+            index !== latest ? (
+              <Message key={index} {...message} />
+            ) : (
+              <Message key={index} {...message} mainref={latestMessageRef} />
+            )
+          )}
+        <div ref={bottomScrollRef}></div>
       </div>
       <div className="Chat__input">
         <input
@@ -101,7 +102,7 @@ function Chat(props) {
           onChange={(e) => setInputmessage(e.target.value)}
           onKeyDown={onPressEnter}
           disabled={other.erased}
-          ref={input_ref}
+          ref={inputRef}
         />
         <Icon
           hidden={other.erased}
@@ -121,5 +122,36 @@ function Chat(props) {
     </div>
   ) : null;
 }
+
+const ref = PropTypes.oneOfType([
+  PropTypes.func,
+  PropTypes.shape({ current: PropTypes.object }),
+]);
+
+Chat.propTypes = {
+  previewRef: ref,
+  inputRef: ref,
+  bottomScrollRef: ref,
+  latestMessageRef: ref,
+  mostMessagesRef: ref,
+  other: PropTypes.object,
+  active: PropTypes.bool,
+  loadfile: PropTypes.bool,
+  urlload: PropTypes.string,
+  messages: PropTypes.array,
+  quantity: PropTypes.number,
+  inputmessage: PropTypes.string,
+  onClickInfo: PropTypes.func,
+  cleanFileLoader: PropTypes.func,
+  onDragEnter: PropTypes.func,
+  onDrop: PropTypes.func,
+  onDragLeave: PropTypes.func,
+  onPressEnter: PropTypes.func,
+  onPressEsc: PropTypes.func,
+  openWidget: PropTypes.func,
+  onSendMessage: PropTypes.func,
+  onMostMessages: PropTypes.func,
+  setInputmessage: PropTypes.func,
+};
 
 export default Chat;

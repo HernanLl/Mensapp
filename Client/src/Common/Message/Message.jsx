@@ -91,10 +91,14 @@ function Message(props) {
 
 Message.propTypes = {
   my: PropTypes.bool,
-  datetime: PropTypes.string,
   message: PropTypes.string,
+  datetime: PropTypes.string,
   urlprofile: PropTypes.string,
   urlimage: PropTypes.string,
+  mainref: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  ]),
 };
 
 export default Message;
