@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import "babel-polyfill";
 import "./styles.scss";
 import { Context } from "./context/Context";
-import { HashRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import io from "socket.io-client";
 import { getCookie, removeCookie, setCookie, isHome } from "./helper/helper";
 

@@ -31,6 +31,10 @@ if (!fs.existsSync("./uploads")) {
   fs.mkdirSync("uploads");
 }
 
+app.get("*", (_, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
+
 //Server routes
 app.get("/verification/:token", (req, res) => {
   const { token } = req.params;
