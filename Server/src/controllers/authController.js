@@ -103,7 +103,7 @@ function authController(socket, sockets) {
     const token = generateToken(id);
     //Send email
     const link = process.env.URL + "/verification/" + token;
-    sendEmail("hernanllull@gmail.com", email, "Bienvenido a MENSAPP", link);
+    sendEmail(process.env.EMAIL, email, "Bienvenido a MENSAPP", link);
     socket.emit("register", {
       status: 200,
       message: "Ingrese a su email para verificar su cuenta",

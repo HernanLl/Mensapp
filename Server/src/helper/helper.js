@@ -54,7 +54,9 @@ async function verifyCredentials(token, refreshToken, socket) {
     } else {
       if (socket) {
         newtoken = generateToken(id);
-        socket.emit("new token", { newtoken });
+        if (socket && socket.emit) {
+          socket.emit("new token", { newtoken });
+        }
       }
       authorized = true;
     }
