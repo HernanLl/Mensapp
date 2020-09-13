@@ -103,3 +103,8 @@
     }
   }
 }
+label[for="input"]:focus,
+label[for="input"]:active {
+  background-color: red;
+  color: red !important;
+}

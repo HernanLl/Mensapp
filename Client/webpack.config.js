@@ -8,6 +8,7 @@ module.exports = {
     filename: "bundle.js",
     publicPath: "/",
   },
+  mode: "production",
   resolve: {
     modules: [path.resolve(__dirname, "./src"), "node_modules"],
     extensions: [".js", ".jsx"],
