@@ -2,8 +2,7 @@ const { Pool } = require("pg");
 const pool = new Pool(
   process.env.MODE === "production"
     ? {
-        connectionString:
-          "postgres://qaltaljqhjdced:6a07a8dc2f71a780ab871f074b214fcbe9a5531805c1251a6b30ee06cc61d117@ec2-34-230-149-169.compute-1.amazonaws.com:5432/denamn58knd0s",
+        connectionString: process.env.DATABASE_URL,
       }
     : {}
 );

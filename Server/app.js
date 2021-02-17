@@ -31,15 +31,20 @@ if (!fs.existsSync("./uploads")) {
   fs.mkdirSync("uploads");
 }
 
+app.get("/signup", (_, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
+
 app.get("/signup/finish", (_, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
+app.get("/forgot", (_, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
 //Server routes
 app.get("/verification/:token", (req, res) => {
   const { token } = req.params;
-  console.log(token);
-  console.log("token");
   const id = decodedToken(token);
   if (id) {
     verifyEmail(id);
@@ -49,7 +54,6 @@ app.get("/verification/:token", (req, res) => {
     res.cookie("Auth", JSON.stringify({ id, token, refreshToken }));
     res.redirect("/signup/finish");
   } else {
-    console.log("fallo");
     res.status(404).end();
   }
 });
@@ -62,7 +66,7 @@ app.get("/forgotpassword/:token", (req, res) => {
     const refreshToken = generateRefreshToken(id);
     saveToken(refreshToken, id);
     res.cookie("Auth", JSON.stringify({ id, token, refreshToken }));
-    res.redirect("/#/forgot");
+    res.redirect("/forgot");
   } else {
     res.status(404).end();
   }

@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[Demo de marketlist](https://marketlists.herokuapp.com/)
+[Demo de mensapp](https://marketlists.herokuapp.com/)
 
 ![](/views.png)
 

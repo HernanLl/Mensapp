@@ -46,26 +46,6 @@ function RegisterCompleteContainer(props) {
   };
 
   useEffect(() => {
-    const abortController = new AbortController();
-    navigator.geolocation.getCurrentPosition((position) => {
-      const crd = position.coords;
-      fetch(
-        `https://us1.locationiq.com/v1/reverse.php?key=pk.532b9c5eb60f602ee56fbd2bf8df58af&lat=${crd.latitude}&lon=${crd.longitude}&format=json`,
-        {
-          signal: abortController.signal,
-        }
-      )
-        .then((res) => res.json())
-        .then((res) =>
-          setLocation(`${res.address.city}, ${res.address.country}`)
-        );
-    });
-    return () => {
-      abortController.abort();
-    };
-  }, []);
-
-  useEffect(() => {
     setUrlprofile(images[0]);
     setUrlbackground(images[1]);
   }, [images]);

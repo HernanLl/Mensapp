@@ -17,6 +17,8 @@ function generateToken(id) {
 function decodedToken(token) {
   try {
     const decoded = jwt.decode(token, process.env.SECRET);
+    console.log("Decoded token");
+    console.log(decoded);
     return decoded.id;
   } catch (err) {
     return null;

@@ -197,20 +197,22 @@ function ChatContainer(props) {
   };
   //handlers to socket events
   const handlerGetMessages = ({ messages }) => {
-    const filteredmessages = messages.map((message) => {
-      return message.from === my.id
-        ? {
-            ...message,
-            my: true,
-            urlprofile: my.urlprofile,
-          }
-        : {
-            ...message,
-            my: false,
-            urlprofile: other.urlprofile,
-          };
-    });
-    setMessages(filteredmessages);
+    if(messages){
+      const filteredmessages = messages.map((message) => {
+        return message.from === my.id
+          ? {
+              ...message,
+              my: true,
+              urlprofile: my.urlprofile,
+            }
+          : {
+              ...message,
+              my: false,
+              urlprofile: other.urlprofile,
+            };
+      });
+      setMessages(filteredmessages);
+    }
   };
   const handlerNewMessage = ({ from, message, datetime, urlimage }) => {
     if (from === other.id) {
