@@ -166,6 +166,7 @@ function Chatboard() {
       <EditProfile active={edit} setActive={setEdit} data={user} />
       <Navbar
         urlprofile={user.urlprofile}
+        edit={edit}
         setEdit={setEdit}
         openProfile={() => handlerClickInfo("user")}
       />

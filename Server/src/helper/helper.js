@@ -4,7 +4,7 @@ const { gmailTransport } = require("../config/nodemailer_config");
 const { getTokens } = require("../database/database");
 
 function generateHash(password) {
-  return bcrypt.hashSync(password, 8);
+  return bcrypt.hashSync(password, process.env.SALTS);
 }
 function compareHash(password, hash) {
   return bcrypt.compareSync(password, hash);
@@ -17,8 +17,6 @@ function generateToken(id) {
 function decodedToken(token) {
   try {
     const decoded = jwt.decode(token, process.env.SECRET);
-    console.log("Decoded token");
-    console.log(decoded);
     return decoded.id;
   } catch (err) {
     return null;

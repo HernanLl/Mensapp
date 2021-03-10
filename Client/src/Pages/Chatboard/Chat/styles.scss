@@ -1,19 +1,37 @@
 @import "../../../general.scss";
 .Chat {
+  display: flex;
+  flex-direction: column;
   transition: width 1s;
+  &__nocontent {
+    width: calc(100% - 780px);
+    padding: 16px;
+    color: white;
+    height: 100%;
+    background: $color2;
+    h1 {
+      font-size: 34px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    span {
+      font-size: 18px;
+      color: rgba(238, 238, 238, 0.5);
+    }
+  }
   &__info {
-    -webkit-box-shadow: 0px 4px 5px 0px rgba(238, 238, 238, 1);
-    -moz-box-shadow: 0px 4px 5px 0px rgba(238, 238, 238, 1);
-    box-shadow: 0px 4px 5px 0px rgba(238, 238, 238, 1);
+    background: white;
+    border: 1px solid #eee;
     display: flex;
     flex-direction: column;
     justify-content: center;
     height: 100px;
-    padding: 1rem;
+    padding: 0 1rem;
     transition: background 0.3s;
     cursor: pointer;
     &:hover {
-      background: $color2;
+      background: #eee;
     }
     .Info {
       &__name {
@@ -30,7 +48,6 @@
   &__listMessages {
     position: relative;
     flex: 1;
-    height: calc(100vh - 150px);
     overflow: hidden auto;
     outline: none;
     padding-bottom: 56px;
@@ -70,6 +87,7 @@
     align-items: center;
     height: 50px;
     width: 100%;
+    background: #eee;
     input {
       flex: 1;
       height: 100%;
@@ -81,11 +99,30 @@
     }
     .Icon {
       background: #eef0f2;
-      padding: 10px 0;
+      margin: 0 8px !important;
     }
   }
   &__mostmessages {
     display: flex;
     justify-content: center;
+  }
+  &__icon-ly {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    height: 100%;
+    cursor: pointer;
+    hr {
+      position: absolute;
+      bottom: 0;
+      width: 70%;
+      left: calc(12.5%);
+      border: none;
+      height: 2px;
+    }
+    &:hover > hr {
+      background: $color2;
+    }
   }
 }

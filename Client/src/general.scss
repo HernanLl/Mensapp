@@ -1,7 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap");
+* {
+  box-sizing: border-box;
+}
 body {
   font-family: "Roboto", sans-serif;
-  box-sizing: border-box;
 }
 //scrolls
 .scroll::-webkit-scrollbar-track {
@@ -19,11 +21,13 @@ body {
 }
 
 //Pallete
+$white: white;
 $color1: rgba(230, 57, 70, 1);
-$color2: rgba(241, 250, 238, 1);
+$color2: #6875db;
 $color3: rgba(72, 72, 72, 1);
 $color4: rgba(69, 123, 157, 1);
 $color5: rgba(29, 53, 87, 1);
+$color6: #61b8e8;
 
 //Actions
 $danger: rgba(255, 68, 68, 1);

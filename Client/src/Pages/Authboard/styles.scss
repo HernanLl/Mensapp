@@ -22,6 +22,7 @@
   padding: 2rem 3rem;
   background: white;
   overflow: auto;
+  border-radius: 20px;
   &__brand {
     @include flex-row-center;
     position: absolute;

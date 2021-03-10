@@ -39,8 +39,8 @@ function Chat(props) {
   const { id, name = "", state = "" } = other;
 
   const stylecontainer = active
-    ? { width: "calc(100% - 775px)" }
-    : { width: "calc(100% - 425px)" };
+    ? { width: "calc(100% - 780px)" }
+    : { width: "calc(100% - 430px)" };
 
   let latest =
     quantity * 10 < messages.length
@@ -104,23 +104,34 @@ function Chat(props) {
           disabled={other.erased}
           ref={inputRef}
         />
-        <Icon
-          hidden={other.erased}
-          name="CAMERA"
-          size={40}
-          pointer={true}
-          onClick={openWidget}
-        />
-        <Icon
-          hidden={other.erased}
-          name="PLANE"
-          size={50}
-          pointer={true}
-          onClick={onSendMessage}
-        />
+        <div class="Chat__icon-ly">
+          <Icon
+            hidden={other.erased}
+            name="CAMERA"
+            size={20}
+            pointer={true}
+            onClick={openWidget}
+          />
+          <hr />
+        </div>
+        <div class="Chat__icon-ly">
+          <Icon
+            hidden={other.erased}
+            name="PLANE"
+            size={20}
+            pointer={true}
+            onClick={onSendMessage}
+          />
+          <hr />
+        </div>
       </div>
     </div>
-  ) : null;
+  ) : (
+    <div class="Chat__nocontent">
+      <h1>Bienvenido a Mensapp</h1>
+      <span>Presione un usuario para iniciar un chat</span>
+    </div>
+  );
 }
 
 const ref = PropTypes.oneOfType([

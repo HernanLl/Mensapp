@@ -18,7 +18,7 @@ const {
   removeToken,
   defaultImages,
 } = require("../database/database");
-const cloduinary = require("cloudinary").v2;
+const cloudinary = require("cloudinary").v2;
 
 function authController(socket, sockets) {
   socket.on("login", async function ({ email, password }) {
@@ -40,7 +40,7 @@ function authController(socket, sockets) {
     if (!user.verified) {
       socket.emit("login", {
         status: 403,
-        message: "Su email aun no fue verificado",
+        message: "Su email aún no fue verificado",
       });
       return;
     }
@@ -110,59 +110,54 @@ function authController(socket, sockets) {
     });
   });
 
-  socket.on("register complete", async function ({
-    urlprofile,
-    urlbackground,
-    state,
-    location,
-    cookie,
-  }) {
-    const { token, refreshToken } = cookie;
-    const id = decodedToken(token);
-    if (await !verifyCredentials(token, refreshToken, socket)) {
-      socket.emit("error server", {
-        code: 401,
-        message: "No autorizado, credenciales invalidas",
+  socket.on(
+    "register complete",
+    async function ({ urlprofile, urlbackground, state, location, cookie }) {
+      const { token, refreshToken } = cookie;
+      const id = decodedToken(token);
+      if (await !verifyCredentials(token, refreshToken, socket)) {
+        socket.emit("error server", {
+          code: 401,
+          message: "No autorizado, credenciales invalidas",
+        });
+        return;
+      }
+      await updateUser({
+        id,
+        urlprofile,
+        urlbackground,
+        state,
+        location,
       });
-      return;
     }
-    await updateUser({
-      id,
-      urlprofile,
-      urlbackground,
-      state,
-      location,
-    });
-  });
+  );
 
-  socket.on("update and remove", async function ({
-    url,
-    newurl,
-    selectedImage,
-    cookie,
-  }) {
-    const { token, refreshToken } = cookie;
-    const id = decodedToken(token);
-    if (await !verifyCredentials(token, refreshToken, socket)) {
-      socket.emit("error server", {
-        code: 401,
-        message: "No autorizado, credenciales invalidas",
+  socket.on(
+    "update and remove",
+    async function ({ url, newurl, selectedImage, cookie }) {
+      const { token, refreshToken } = cookie;
+      const id = decodedToken(token);
+      if (await !verifyCredentials(token, refreshToken, socket)) {
+        socket.emit("error server", {
+          code: 401,
+          message: "No autorizado, credenciales invalidas",
+        });
+        return;
+      }
+      //destroy old image
+      if (url !== defaultImages[0] && url !== defaultImages[1]) {
+        const publicid = getPublicId(url);
+        cloudinary.uploader.destroy(publicid);
+      }
+      //save url info
+      await updateUser({
+        id,
+        urlprofile: selectedImage === 0 ? newurl : null,
+        urlbackground: selectedImage === 1 ? newurl : null,
       });
-      return;
+      socket.broadcast.emit("change user connection", { id, connection: true });
     }
-    //destroy old image
-    if (url !== defaultImages[0] && url !== defaultImages[1]) {
-      const publicid = getPublicId(url);
-      cloduinary.uploader.destroy(publicid);
-    }
-    //save url info
-    await updateUser({
-      id,
-      urlprofile: selectedImage === 0 ? newurl : null,
-      urlbackground: selectedImage === 1 ? newurl : null,
-    });
-    socket.broadcast.emit("change user connection", { id, connection: true });
-  });
+  );
 
   socket.on("isAuthenticated", async function ({ cookie }) {
     const { token, refreshToken } = cookie;
@@ -211,35 +206,34 @@ function authController(socket, sockets) {
       message: "Contraseña actualizada con exito, ingrese a su cuenta",
     });
   });
-  socket.on("forgot password with old", async function ({
-    old,
-    password,
-    cookie,
-  }) {
-    const { token, refreshToken } = cookie;
-    const id = decodedToken(token);
-    if (await !verifyCredentials(token, refreshToken, socket)) {
-      socket.emit("error server", {
-        code: 401,
-        message: "No autorizado, credenciales invalidas",
-      });
-      return;
+  socket.on(
+    "forgot password with old",
+    async function ({ old, password, cookie }) {
+      const { token, refreshToken } = cookie;
+      const id = decodedToken(token);
+      if (await !verifyCredentials(token, refreshToken, socket)) {
+        socket.emit("error server", {
+          code: 401,
+          message: "No autorizado, credenciales invalidas",
+        });
+        return;
+      }
+      const user = await userById(id);
+      if (compareHash(old, user.password)) {
+        const hash = generateHash(password);
+        await updateUser({ id, password: hash });
+        socket.emit("forgot password with old", {
+          status: 200,
+          message: "Contraseña actualizada con exito",
+        });
+      } else {
+        socket.emit("forgot password with old", {
+          status: 400,
+          message: "Contraseña anterior incorrecta",
+        });
+      }
     }
-    const user = await userById(id);
-    if (compareHash(old, user.password)) {
-      const hash = generateHash(password);
-      await updateUser({ id, password: hash });
-      socket.emit("forgot password with old", {
-        status: 200,
-        message: "Contraseña actualizada con exito",
-      });
-    } else {
-      socket.emit("forgot password with old", {
-        status: 400,
-        message: "Contraseña anterior incorrecta",
-      });
-    }
-  });
+  );
   socket.on("logout", async function ({ cookie }) {
     const { token } = cookie;
     const id = decodedToken(token);

@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { svg } from "../../svg";
+
 function Icon(props) {
   const { name, size, color, pointer, hidden, onClick, viewBox } = props;
   return !hidden ? (
@@ -10,6 +11,7 @@ function Icon(props) {
       style={{
         width: `${size}px`,
         height: `${size}px`,
+        margin: "16px 0",
         fill: color,
         cursor: pointer && "pointer",
       }}

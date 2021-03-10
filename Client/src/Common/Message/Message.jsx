@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import "./styles.scss";
 import { showDatetime, convertUrlProfile } from "helper/helper.js";
 import { useState } from "react";
+import cancelFile from "assets/close.svg";
 
 function Message(props) {
   const { my, message, datetime, urlprofile, urlimage, mainref } = props;
@@ -55,12 +56,11 @@ function Message(props) {
             if (e.keyCode === 27) setActivepreview(false);
           }}
         >
-          <div className="Preview__cancel">
-            <div
-              className="Preview__handlerClick"
-              onClick={() => setActivepreview(false)}
-            ></div>
-            X
+          <div
+            className="Preview__cancel"
+            onClick={() => setActivepreview(false)}
+          >
+            <img src={cancelFile} className="Preview__handlerClick" />
           </div>
           <img alt="message" src={urlimage} />
         </div>

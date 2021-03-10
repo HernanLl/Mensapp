@@ -6,6 +6,12 @@ const pool = new Pool(
       }
     : {}
 );
+
+pool.connect((err, client) => {
+  if (err) console.log(err);
+  else console.log("Conectado a la base de datos");
+});
+
 const {
   USERBYID,
   USERBYEMAIL,

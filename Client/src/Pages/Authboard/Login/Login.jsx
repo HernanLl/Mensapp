@@ -38,9 +38,9 @@ function Login(props) {
           placeholder="Contraseña"
           autocomplete="new-password"
         />
-        <a className="Form__link Form__forgot" href="/forgot">
+        <Link className="Form__link Form__forgot" to="/forgot">
           ¿Olvidaste la contraseña?
-        </a>
+        </Link>
         <button className="Form__button" onClick={onLogin}>
           Ingresar
         </button>
