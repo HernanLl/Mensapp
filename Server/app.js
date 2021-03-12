@@ -34,7 +34,7 @@ const server = app.listen(app.get("port"), () => {
         cloudinary.uploader.destroy(publicid);
       }
     });
-  }, 1000 * 60 * 60 * 24);
+  }, 1000 * 60 * 60 * 24); // each 24 hours remove images pendings
   console.log("Server on port " + app.get("port"));
 });
 
